@@ -202,10 +202,11 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
                                   read_file_command,
                                   "--runThreadN", thread, sep=" " ))
 
-  for(c in cmd) system(c) # Run alignment
+  for(c in cmd) {
+    cat(c, "\n--------------------------------------\n")
+    system(c) # Run alignment
+  }
 
   message("\n***Alignment Finished***\n")
-
-
 
 }
