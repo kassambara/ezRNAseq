@@ -5,6 +5,8 @@ R Functions
 -----------
     
     
+(In development, don't install)
+
 Installation
 -------------
      
