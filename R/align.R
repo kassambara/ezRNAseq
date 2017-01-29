@@ -211,8 +211,8 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
   # Renaming SAM file
   # ++++++++++++++++++++++++++++++++++++++
   message("- Renaming SAM Files....\n")
-  initial_name <- file.path(result.dir, "SAM", paste0(name, "_Aligned.out.sam"))
-  final_name <- file.path(result.dir, "SAM", paste0(name, ".sam"))
+  initial_name <- file.path(result.dir, "SAM", paste0(samples$name, "_Aligned.out.sam"))
+  final_name <- file.path(result.dir, "SAM", paste0(samples$name, ".sam"))
   for(i in 1:length(samples$name)) file.rename(initial_name[i], final_name[i])
 
   # Convert SAM -> BAM file
