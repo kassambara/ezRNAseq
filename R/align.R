@@ -214,9 +214,12 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
   # ++++++++++++++++++++++++++++++++++++++++
   message("\nConverting SAM to BAM Files...\n",
           "======================\n")
+  # (echo file1; echo file2) | parallel -j 10 samtools view -bs file1.sam > file1.bam)
   sam_file <- file.path(result.dir, "SAM/{}_Aligned.out.sam")
   bam_file <- file.path(result.dir, "BAM/{}.bam")
-  cmd <- paste(paste(samples$name), "|", "parallel -j", thread,
+  sample_name <- paste(samples$name, collapse = "; echo ")
+  sample_name <- paste0("(echo ", sample_name, ";)")
+  cmd <- paste(sample_name, "|", "parallel -j", thread,
              "samtools view -bs", sam_file, ">", bam_file,
               sep = " ")
   system(cmd)
