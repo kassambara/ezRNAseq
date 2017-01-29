@@ -185,21 +185,21 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
           "======================\n")
 
   # Option to read compressed FASTQ files
-  if(fastq.gz) read_file_command <- "-–readFilesCommand zcat"
+  if(fastq.gz) read_file_command <- "-–readFilesCommand gunzip -c"
   else read_file_command <- ""
 
   if(pairedEnd)
     cmd <- with(samples, paste("STAR --genomeDir", star.index,
+                               read_file_command,
                                "--readFilesIn", fastq1, fastq2,
                                "--outSAMstrandField intronMotif",
                                "--outFileNamePrefix", file.path(result.dir, "SAM", paste0(name, "_")),
-                               read_file_command,
                                "--runThreadN", thread, sep=" " ))
   else cmd <- with(samples, paste("STAR --genomeDir", star.index,
+                                  read_file_command,
                                   "--readFilesIn", fastq1,
                                   "--outSAMstrandField intronMotif",
                                   "--outFileNamePrefix", file.path(result.dir, "SAM", paste0(name, "_")),
-                                  read_file_command,
                                   "--runThreadN", thread, sep=" " ))
 
   for(c in cmd) {
