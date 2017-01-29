@@ -181,8 +181,8 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
 
   # STAR Alignement
   # ++++++++++++++++++++++++++++++++++++++++
-  message("\nStarting Alignment...\n",
-          "======================\n")
+  # Result = SAM file
+  message("\n- Starting Alignment...\n")
 
   # Option to read compressed FASTQ files
   if(fastq.gz) read_file_command <- "--readFilesCommand gunzip -c"
@@ -206,23 +206,36 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
     cat(c, "\n--------------------------------------\n")
     system(c) # Run alignment
   }
-  message("\n####Alignment Finished###\n")
 
 
+  # Renaming SAM file
+  # ++++++++++++++++++++++++++++++++++++++
+  message("- Renaming SAM Files....\n")
+  initial_name <- file.path(result.dir, "SAM", paste0(name, "_Aligned.out.sam"))
+  final_name <- file.path(result.dir, "SAM", paste0(name, ".sam"))
+  for(i in 1:length(samples$name)) file.rename(initial_name[i], final_name[i])
 
   # Convert SAM -> BAM file
   # ++++++++++++++++++++++++++++++++++++++++
-  message("\nConverting SAM to BAM Files...\n",
-          "======================\n")
+  #  ls *.sam | parallel "samtools view -b -S {} | samtools sort - {.}; samtools index {.}.bam"
+  message("- Converting SAM to BAM Files...\n")
+  sam_file <- file.path(result.dir, "SAM/{}")
+  bam_file <- file.path(result.dir, "BAM/{.}.bam")
+  paste(
+    'ls ', sam_dir, '/*.sam | parallel ',
+    '"samtools view -bs ', sam_file, ' > ', bam_file, '"'
+  )
+
+
   # (echo file1; echo file2) | parallel -j 10 samtools view -bs file1.sam > file1.bam)
-  sam_file <- file.path(result.dir, "SAM/{}_Aligned.out.sam")
-  bam_file <- file.path(result.dir, "BAM/{}.bam")
-  sample_name <- paste(samples$name, collapse = "; echo ")
-  sample_name <- paste0("(echo ", sample_name, ";)")
-  cmd <- paste(sample_name, "|", "parallel -j", thread,
-             "samtools view -bs", sam_file, ">", bam_file,
-              sep = " ")
-  system(cmd)
+  # sam_file <- file.path(result.dir, "SAM/{}_Aligned.out.sam")
+  # bam_file <- file.path(result.dir, "BAM/{}.bam")
+  # sample_name <- paste(samples$name, collapse = "; echo ")
+  # sample_name <- paste0("(echo ", sample_name, ";)")
+  # cmd <- paste(sample_name, "|", "parallel -j", thread,
+  #            "samtools view -bs", sam_file, ">", bam_file,
+  #             sep = " ")
+  # system(cmd)
 
   # Remove or keep SAM file
   # +++++++++++++++++++++++++++++++
