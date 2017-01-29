@@ -159,7 +159,6 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
 #' @describeIn align Aligning RNAseq data using STAR software
 star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
                        star.index = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Sequence/StarIndex/",
-                       gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
                        result.dir = NULL,
                        keep = c("name_sorted_bam"),
                        pairedEnd = TRUE, fastq.gz = TRUE, thread = 10)
@@ -177,6 +176,7 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
   # Create result dirs
   # ++++++++++++++++++++++++++++++++++++++++
   create_dir(file.path(result.dir, "SAM"))
+  create_dir(file.path( result.dir, "BAM"))
 
 
   # STAR Alignement
@@ -206,7 +206,26 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
     cat(c, "\n--------------------------------------\n")
     system(c) # Run alignment
   }
+  message("\n####Alignment Finished###\n")
 
-  message("\n***Alignment Finished***\n")
+
+
+  # Convert SAM -> BAM file
+  # ++++++++++++++++++++++++++++++++++++++++
+  message("\nConverting SAM to BAM Files...\n",
+          "======================\n")
+  sam_file <- file.path(result.dir, "SAM/{}_Aligned.out.sam")
+  bam_file <- file.path(result.dir, "BAM/{}.bam")
+  cmd <- paste(paste(samples$name), "|", "parallel -j", thread,
+             "samtools view -bs", sam_file, ">", bam_file,
+              sep = " ")
+  system(cmd)
+
+  # Remove or keep SAM file
+  # +++++++++++++++++++++++++++++++
+  if(!("sam" %in% keep)){
+    unlink(file.path(result.dir, "SAM"),
+           recursive = TRUE, force = TRUE)
+  }
 
 }

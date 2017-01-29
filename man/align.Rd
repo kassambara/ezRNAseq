@@ -14,7 +14,6 @@ rnaseq_workflow(data_dir = getwd(), samples.annotation = "samples.txt",
 
 star_align(data_dir = getwd(), samples.annotation = "samples.txt",
   star.index = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Sequence/StarIndex/",
-  gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
   result.dir = NULL, keep = c("name_sorted_bam"), pairedEnd = TRUE,
   fastq.gz = TRUE, thread = 10)
 }
