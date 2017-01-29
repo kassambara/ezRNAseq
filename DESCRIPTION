@@ -10,8 +10,7 @@ License: GPL-2
 LazyData: true
 Depends:
     R (>= 3.2.1),
-    ggplot2,
-    grid
+    ggplot2
 Imports:
     Biobase,
     DESeq2,
