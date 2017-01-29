@@ -217,25 +217,14 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
 
   # Convert SAM -> BAM file
   # ++++++++++++++++++++++++++++++++++++++++
-  #  ls *.sam | parallel "samtools view -b -S {} | samtools sort - {.}; samtools index {.}.bam"
+  #  ls *.sam | parallel "samtools view -bS {} > ../BAM/{.}.bam"
   message("- Converting SAM to BAM Files...\n")
-  sam_file <- file.path(result.dir, "SAM/{}")
-  bam_file <- file.path(result.dir, "BAM/{.}.bam")
-  paste(
-    'ls ', sam_dir, '/*.sam | parallel ',
-    '"samtools view -bs ', sam_file, ' > ', bam_file, '"'
-  )
-
-
-  # (echo file1; echo file2) | parallel -j 10 samtools view -bs file1.sam > file1.bam)
-  # sam_file <- file.path(result.dir, "SAM/{}_Aligned.out.sam")
-  # bam_file <- file.path(result.dir, "BAM/{}.bam")
-  # sample_name <- paste(samples$name, collapse = "; echo ")
-  # sample_name <- paste0("(echo ", sample_name, ";)")
-  # cmd <- paste(sample_name, "|", "parallel -j", thread,
-  #            "samtools view -bs", sam_file, ">", bam_file,
-  #             sep = " ")
-  # system(cmd)
+  sam_dir <- file.path(result.dir, "SAM")
+  bam_dir <- file.path(result.dir, "BAM/{.}.bam")
+  setwd(sam_dir) # Go to SAM dir
+  cmd <- paste( 'ls',  '*.sam | parallel -t -j', thread,
+                '"samtools view -bS {} >', bam_dir, '"', sep = " ")
+  system(cmd)
 
   # Remove or keep SAM file
   # +++++++++++++++++++++++++++++++
@@ -244,4 +233,32 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
            recursive = TRUE, force = TRUE)
   }
 
+
+  # Organizing BAM files
+  #++++++++++++++++++++++++++++++++++++++++++
+  # - sort by name for htseq-count
+  # - sort by chromosome and create index for IGV
+  #  ls *.bam | parallel "samtools sort file.bam  file_name_sorted.bam"
+  message("- Organizing BAM files... \n")
+  setwd(file.path(result.dir, "BAM"))
+
+  if("name_sorted_bam" %in% keep) {
+    message("- Sorting reads by name... \n")
+    create_dir("name_sorted")
+    cmd <- paste('ls', '*.bam | parallel -t -j', thread,
+                 '"samtools sort -n {} name_sorted/{.}_name_sorted"', sep = " ")
+    system(cmd)
+  }
+
+   if("chr_sorted_bam" %in% keep){
+     message("- Sorting reads by chromosome... \n")
+     create_dir("chr_sorted")
+     system(paste('ls', '*.bam | parallel -t -j', thread,
+                  '"samtools sort {} chr_sorted/{.}_sorted"', sep = " ")) # by chromosome
+     setwd("chr_sorted")
+     system(paste('ls', '*.bam | parallel -t -j', thread,
+                  '"samtools index {} {}"', sep = " ")) #index
+   }
+
+  setwd(oldwd)
 }
