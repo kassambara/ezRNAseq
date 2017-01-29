@@ -185,7 +185,7 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
           "======================\n")
 
   # Option to read compressed FASTQ files
-  if(fastq.gz) read_file_command <- "-–readFilesCommand gunzip -c"
+  if(fastq.gz) read_file_command <- "--readFilesCommand gunzip -c"
   else read_file_command <- ""
 
   if(pairedEnd)
