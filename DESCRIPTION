@@ -1,0 +1,68 @@
+Package: ezRNAseq
+Type: Package
+Title: RNAseq analysis
+Version: 1.0.0
+Date: 2015-09-04
+Authors@R: c(
+    person("Alboukadel", "Kassambara", role = c("aut", "cre"), email = "alboukadel.kassambara@gmail.com"))
+Description: Easy mapping and differential expression analysis.
+License: GPL-2
+LazyData: true
+Depends:
+    R (>= 3.2.1),
+    ggplot2,
+    grid
+Imports:
+    Biobase,
+    DESeq2,
+    GenomicRanges,
+    genefilter,
+    limma,
+    reshape2,
+    rmarkdown (>= 0.8),
+    S4Vectors
+Suggests:
+    BiocInstaller,
+    BiocParallel,
+    biomaRt,
+    clusterProfiler,
+    DOSE,
+    GenomicAlignments,
+    GenomicFeatures,
+    knitr,
+    ReactomePA,
+    Rsamtools,
+    SummarizedExperiment
+VignetteBuilder: knitr
+URL: http://www.genomicscape.com
+BugReports: https://github.com/kassambara/ezRNAseq/issues
+biocViews: Software, Visualization, Sequencing
+Repository: Bioconductor
+SystemRequirements: STAR, samtools
+Collate:
+    'AllClasses.R'
+    'utilities_diffexprs.R'
+    'utilities.R'
+    'align.R'
+    'all_classes.R'
+    'summarize.R'
+    'plot.R'
+    'annotate.R'
+    'biomart.hs.genes.R'
+    'count_reads.R'
+    'create_star_index.R'
+    'distribution.R'
+    'expressed.R'
+    'expression_set.R'
+    'fastq_nb_reads.R'
+    'get_diff.R'
+    'get_regulators.R'
+    'human.ee.R'
+    'human.tf.R'
+    'install_igenome.R'
+    'limma.R'
+    'plot_MA.R'
+    'report.R'
+    'utilities_stepProfiler.R'
+    'stepProfiler.R'
+RoxygenNote: 5.0.1

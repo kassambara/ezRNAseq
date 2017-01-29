@@ -1,0 +1,391 @@
+---
+title: "Exploratory data analysis"
+author: "Alboukadel Kassambara"
+output: html_document
+---
+   
+   
+```{r, echo = FALSE}
+#Knitr settings
+knitr::opts_chunk$set(
+  warning=FALSE, message=FALSE, echo=FALSE, tidy=FALSE, error=FALSE,
+  fig.show='hold', fig.width=3.5, fig.height = 3.5
+)
+options(width=150)
+```
+     
+     
+    
+```{r, echo = FALSE}
+library( "GenomicAlignments")
+library("ggplot2")
+library("dplyr")
+library(ezRNAseq)
+
+# Config
+#++++++++++++++++++++++
+se <- "/eqmoreaux/data/sequencing/RNAseq/NPCD/GRCh37/COUNT/se.RDATA"
+result_dir <-"/eqmoreaux/data/sequencing/RNAseq/NPCD/GRCh37/COUNT"
+thread <- 25
+   
+
+dir.create(result_dir, recursive = FALSE, showWarnings = TRUE)
+
+
+# Samples and data
+# ++++++++++++++++++++++
+# samples annotation
+# - name column required
+# - group column required
+load(se)
+se <- se[, as.vector(samples$name)] # same order as samples
+samples <- colData(se) 
+
+# raw count
+raw_count <- assay(se)
+```
+     
+     
+    
+   
+    
+# Alignment summary
+    
+    
+```{r}
+
+```
+
+    
+    
+# Total read counts per sample 
+        
+    
+    
+```{r total-read-count, fig.width = 5, fig.height = 5}
+# Number of reads per samples
+col_sum <- colSums(raw_count)
+col_sum 
+# Number of mapped reads
+ggbarplot(col_sum, ylab ="Number of mapped reads")
+```
+     
+      
+- Number of genes in the count data : `r nrow(raw_count)`  
+- Number of genes with count > 0 :  `r length(which(rowSums(raw_count)>0))`  
+   
+   
+   
+# Distribution of count per sample
+    
+    
+```{r}
+mraw_count <- reshape2::melt(log2(raw_count+0.5) )
+base::colnames(mraw_count) <- c("genes", "Samples", "count")
+```
+    
+    
+## Boxplot
+    
+```{r, fig.width = 5, fig.height = 5}
+ggboxplot(mraw_count, "Samples", "count")+
+  labs(y = "log2(count") +
+  geom_hline(yintercept = median(mraw_count$count), 
+             linetype = 2, color = "red")
+
+```
+   
+   
+**Red line** is the global median accross all samples
+    
+    
+    
+## Frequency distribution of count
+   
+   
+```{r, fig.width = 5, fig.height = 5}
+ggplot(mraw_count, aes(x = count, y = ..count.., color = Samples)) + 
+  geom_density() +
+  labs(x = "log2(count)", y = "Frequency", title = "Count distribution")
+```
+    
+    
+Remove genes with zero count:   
+    
+    
+```{r, fig.width = 5, fig.height = 5}
+mraw_count <- dplyr::filter(mraw_count, count > 0)
+ggplot(mraw_count, aes(x = count, y = ..count.., color = Samples)) + 
+  geom_density() +
+  labs(x = "Count", y = "Frequency", title = "Count distribution")
+```
+    
+    
+    
+# Ensembl gene biotype enrichment
+    
+    
+    
+```{r}
+# Annotation
+ann <- ez_annotate(raw_count)
+write.table(ann, 
+            file=file.path(result_dir, "raw.count.txt"), 
+            sep="\t", col.names=NA, row.names=TRUE)
+```
+
+    
+    
+## Statistic for each sample
+    
+    
+    
+```{r}
+sample_names <- colnames(raw_count)
+
+for(sple in sample_names){
+ ss <-  ez_biotype_stat(ann, biotype = "biotype", 
+                        samples = sple, compact = TRUE)
+ print(ss$plot+ggtitle(sple))
+}
+```
+   
+   
+      
+## Global stat accross all samples:
+   
+   
+   
+```{r, fig.width=7, fig.height=7}
+ss <-  ez_biotype_stat(ann, "biotype", colnames(raw_count))
+ss$stat
+print(ss$plot + ggtitle("All samples"))
+```
+   
+
+
+   
+
+Source:    
+     
+     
+- http://www.ensembl.org/Help/Glossary
+- http://www.ensembl.org/Help/Faq?id=468
+- Read more [here](http://vega.sanger.ac.uk/info/about/gene_and_transcript_types.html)
+- http://www.gencodegenes.org/gencode_biotypes.html
+
+
+The biotypes can be grouped into protein coding, pseudogene, long noncoding and short noncoding. Examples of biotypes in each group are as follows:
+   
+   
+A gene or transcript classification. Transcript types include protein coding, pseudogene, and long non-coding and short non-coding RNAs. For human, mouse and selected other species we incorporate manual annotation from Havana. Where a gene or transcript has been manually annotated, we use the manually assigned biotype. The full list of biotypes used by Havana are here.
+
+ 
+
+The biotypes can be grouped into protein coding, pseudogene, long noncoding and short noncoding. Examples of biotypes in each group are as follows:
+
+1. Protein coding:
+ - IG_C_gene, IG_D_gene, IG_J_gene, IG_LV_gene, IG_M_gene, IG_V_gene, IG_Z_gene, nonsense_mediated_decay, nontranslating_CDS, non_stop_decay, polymorphic_pseudogene, protein_coding, TR_C_gene, TR_D_gene, TR_gene, TR_J_gene, TR_V_gene.
+    
+    
+2. Pseudogene:
+ - disrupted_domain, IG_C_pseudogene, IG_J_pseudogene, IG_pseudogene, IG_V_pseudogene, processed_pseudogene, pseudogene, transcribed_processed_pseudogene, transcribed_unprocessed_pseudogene, translated_processed_pseudogene, translated_unprocessed_pseudogene, TR_J_pseudogene, TR_V_pseudogene, unitary_pseudogene, unprocessed_pseudogene
+
+3. Long noncoding:
+ - 3prime_overlapping_ncrna, ambiguous_orf, antisense, lincRNA, ncrna_host, non_coding, processed_transcript, retained_intron, sense_intronic, sense_overlapping
+     
+     
+4. Short noncoding:
+ - miRNA, miRNA_pseudogene, misc_RNA, misc_RNA_pseudogene, Mt_rRNA, Mt_tRNA, Mt_tRNA_pseudogene, ncRNA, pre_miRNA, RNase_MRP_RNA, RNase_P_RNA, rRNA, rRNA_pseudogene, scRNA_pseudogene, snlRNA, snoRNA, snoRNA_pseudogene, snRNA, snRNA_pseudogene, SRP_RNA, tmRNA,, tRNA, tRNA_pseudogene
+     
+    
+    
+    
+# Differential expression analysis using DESeq2
+     
+     
+```{r}
+library("BiocParallel")
+register(MulticoreParam(thread))
+```
+
+
+```{r}
+library("DESeq2")
+# Data in DESeq2 format
+dds <- DESeqDataSet(se, design = ~group)
+
+# Normalization for sequencing depth
+dds <- estimateSizeFactors( dds )
+count.normalized <- as.data.frame(round(counts(dds, normalized=TRUE),2))
+count.normalized <- ez_annotate(count.normalized)
+write.table(count.normalized, 
+            file=file.path(result_dir, "count.normalized.txt"), 
+            sep="\t", col.names=NA, row.names=TRUE)
+
+# Remove genes which have zero counts for all samples
+# For speed during annotation
+dds <- dds[ rowSums( counts(dds) ) > 0 , ]
+# Print the design
+design(dds)
+# Run  DESeq
+dds <- DESeq(dds, parallel = TRUE)
+# save
+save(dds, file = file.path(result_dir, "dds.RDATA"))
+```
+      
+      
+      
+## Size factor
+   
+   
+```{r}
+sizeFactors(dds)
+```
+    
+    
+    
+## Diff express result
+    
+    
+```{r}
+res <- results( dds, alpha = 0.05)
+```
+      
+      
+      
+     
+# Remove Immunoglobulin genes
+     
+     
+     
+```{r}
+ig_gene_and_pseudo <- c('IG_C_gene', 'IG_D_gene', 'IG_J_gene', 'IG_LV_gene', 'IG_M_gene',
+                          'IG_V_gene', 'IG_Z_gene', 'IG_C_pseudogene', 'IG_J_pseudogene', 
+                          'IG_pseudogene', 'IG_V_pseudogene')
+
+ig_index <- which(ann$biotype %in%  ig_gene_and_pseudo)
+# Data in DESeq2 format
+dds <- DESeqDataSet(se, design = ~group)
+dds <- dds[ -ig_index , ]
+
+# Write raw count without IG
+write.table(ann[-ig_index, ], 
+            file=file.path(result_dir, "raw.count.ig_removed.txt"), 
+            sep="\t", col.names=NA, row.names=TRUE)
+
+# Normalization for sequencing depth
+dds <- estimateSizeFactors( dds )
+count.normalized <- as.data.frame(round(counts(dds, normalized=TRUE),2))
+count.normalized <- ez_annotate(count.normalized)
+write.table(count.normalized, 
+            file=file.path(result_dir, "count.ig_removed.normalized.txt"), 
+            sep="\t", col.names=NA, row.names=TRUE)
+
+
+# rlog-transformed data: variance stabilization
+# - FOR PCA, Clustering, visualization
+rld <- rlog(dds)
+write.table(assay(rld), 
+            file=file.path(result_dir, "count.ig_removed.rlog.txt"), 
+            sep="\t", col.names=NA, row.names=TRUE)
+
+
+# Remove genes which have zero counts for all samples
+# For speed during annotation
+dds <- dds[ rowSums( counts(dds) ) > 0 , ]
+# Print the design
+design(dds)
+# Run  DESeq
+dds <- DESeq(dds, parallel = TRUE)
+dds.ig_removed <- dds
+# save
+save(dds.ig_removed, file = file.path(result_dir, "dds.ig_removed.RDATA"))
+
+```
+       
+       
+       
+## Heatmap
+    
+    
+```{r}
+library( "genefilter" )
+topVarGenes <- head( order( rowVars( assay(rld) ), decreasing=TRUE ), 100 )
+
+library("gplots")
+library("RColorBrewer")
+heatmap.2( assay(rld)[ topVarGenes, ], scale="row", 
+     trace="none", dendrogram="column", 
+     col = colorRampPalette( rev(brewer.pal(9, "RdBu")) )(255)
+     #,ColSideColors = c( Control="gray", DPN="darkgreen", OHT="orange" )[colData(rld)$group ]
+     )
+```
+
+       
+       
+## Diff express result
+       
+       
+### Summary
+        
+        
+```{r}
+# Result
+# +++++++++++++++++++++++++++
+
+res <- results(dds, alpha = 0.05, 
+               contrast = list("groupBM", c("groupactBC", "groupprePB", "groupPB", "groupPC") ))
+
+res
+
+# Description of column names
+mcols(res, use.names=TRUE)
+
+# Export the result
+# +++++++++++++++++++++
+# Print signficant genes
+res <- subset(res, padj < 0.05 & abs(log2FoldChange)> log2(1.5) ) 
+# Sort by log2 fold change
+res<-res[ order( res$log2FoldChange, decreasing = TRUE ), ]
+# Summarize the results
+summary(res)
+head( res) 
+   
+write.table(ez_annotate(as.data.frame(res)),
+            file=file.path(result_dir, "BM_vs_others.txt"), sep="\t", 
+             col.names=NA, row.names=TRUE)
+
+
+
+# barplot(assay(dds)["ENSG00000090889", ])
+# plotCounts(dds, "ENSG00000090889", intgroup = "group")
+```
+     
+     
+###  Exploring and exporting the results
+     
+  
+
+      
+## Size factor
+   
+   
+Used for normalization
+   
+   
+```{r}
+sizeFactors(dds)
+```
+
+     
+     
+# Information about the gene model
+    
+    
+```{r}
+str( metadata( rowRanges(se) ) )
+```
+
+     
+  
