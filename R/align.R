@@ -166,8 +166,7 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
 {
 
   # Read samples.txt file
-  samples <- read.table(file=samples.annotation,
-                        sep ="\t", header=TRUE, row.names=NULL)
+  samples <- read.delim(file=samples.annotation, header = TRUE, row.names = NULL)
 
   # Go to the directory containing the FASTQ files
   oldwd <- getwd()
@@ -182,7 +181,8 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
 
   # STAR Alignement
   # ++++++++++++++++++++++++++++++++++++++++
-  message("Starting Alignment...\n")
+  message("\nStarting Alignment...\n",
+          "======================\n")
 
   # Option to read compressed FASTQ files
   if(fastq.gz) read_file_command <- "-–readFilesCommand zcat"
@@ -193,6 +193,7 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
                                "--readFilesIn", fastq1, fastq2,
                                "--outSAMstrandField intronMotif",
                                "--outFileNamePrefix", file.path(result.dir, "SAM", paste0(name, "_")),
+                               read_file_command,
                                "--runThreadN", thread, sep=" " ))
   else cmd <- with(samples, paste("STAR --genomeDir", star.index,
                                   "--readFilesIn", fastq1,
@@ -204,4 +205,7 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
   for(c in cmd) system(c) # Run alignment
 
   message("\n***Alignment Finished***\n")
+
+
+
 }
