@@ -4,18 +4,17 @@
 \alias{count_reads}
 \title{Read Counting}
 \usage{
-count_reads(bam = NULL, ext = "name_sorted.bam", by = c("gene", "exon"),
-  result.dir = "COUNT", save = TRUE, show_progress = TRUE,
+count_reads(bam = NULL, ext = ".bam", by = c("gene", "exon"),
+  result.dir = "COUNT", save = TRUE,
   gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
-  pairedEnd = TRUE, ignore.strand = FALSE, mode = "Union", thread = 25)
+  pairedEnd = TRUE, ignore.strand = FALSE, mode = "Union", thread = 10)
 }
 \arguments{
 \item{bam}{a vector of bam files (in the same directory) or a directory
-containing one or more paths to bam files sorted by name. if NULL, BAM
-files in the current working directory are choosed.}
+containing one or more paths to bam files. if NULL, BAM files
+in the current working directory are choosed.}
 
-\item{ext}{BAM file extension. For example ext = "name_sorted.bam". Default
-is "name_sorted.bam". Used only when bam is a directory}
+\item{ext}{BAM file extension. Default is ".bam". Used only when bam is a directory}
 
 \item{by}{One of "gene" (for counting in gene) or "exon" (for counting in
 exon)}
@@ -24,18 +23,17 @@ exon)}
 
 \item{save}{logical value; if TRUE, the result is saved in result.dir.}
 
-\item{show_progress}{if TRUE, the progression is shown}
-
 \item{gtf}{reference genome for STAR and annotation gtf file, respectively.}
 
 \item{pairedEnd}{specify if the data are paired-end sequencing data. Default is TRUE.}
 
-\item{ignore.strand}{A logical indicating if strand should be considered when matching.
-Used during read counting.}
+\item{ignore.strand}{A logical indicating if strand should be considered when
+matching. if TRUE, allows minus strand reads to count in plus strand genes,
+and vice versa. Should be FALSE for stranded RNAsequencing.}
 
-\item{mode}{counting mode. Read ?GenomicAlignments::summarizeOverlaps.
-Default value is "Union". Reads that overlap any portion of exactly one
-feature are counted. Reads that overlap multiple features are discarded.}
+\item{mode}{counting mode. Read ?GenomicAlignments::summarizeOverlaps. Default
+value is "Union". Reads that overlap any portion of exactly one feature are
+counted. Reads that overlap multiple features are discarded.}
 
 \item{thread}{Number of threads to be used. This depends to the available computer ressources.}
 }
@@ -46,14 +44,12 @@ Return an object of class SummarizedExperiment
 Count reads by gene and by exon
 }
 \details{
-Used Bioconductor packages:
-\itemize{
-\item \strong{GenomicFeatures} to prepare the transcript database
-\item \strong{Rsamtools} to import SAM/BAM files in R
-\item \strong{GenomicAlignments} for read counting
-\item \strong{BiocParallel}for parallel computing
-}
+Used Bioconductor packages: \itemize{ \item \strong{GenomicFeatures}
+to prepare the transcript database \item \strong{Rsamtools} to import SAM/BAM
+files in R \item \strong{GenomicAlignments} for read counting \item
+\strong{BiocParallel}for parallel computing }
 
-Input files: BAM files. No need to sort the BAM files in Bioconductor version > 2.12.
+Input files: BAM files. No need to sort the BAM files in Bioconductor version
+> 2.12.
 }
 

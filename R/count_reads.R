@@ -1,38 +1,37 @@
 #' @include utilities.R
 NULL
-#' Read Counting
-#' @description Count reads by gene and by exon
-#' @param bam a vector of bam files (in the same directory) or a directory
-#'   containing one or more paths to bam files sorted by name. if NULL, BAM
-#'   files in the current working directory are choosed.
-#' @param ext BAM file extension. For example ext = "name_sorted.bam". Default
-#'   is "name_sorted.bam". Used only when bam is a directory
-#' @param mode counting mode. Read ?GenomicAlignments::summarizeOverlaps.
-#'   Default value is "Union". Reads that overlap any portion of exactly one
-#'   feature are counted. Reads that overlap multiple features are discarded.
-#' @param result.dir a directory to save the output.
-#' @param save logical value; if TRUE, the result is saved in result.dir.
-#' @param by One of "gene" (for counting in gene) or "exon" (for counting in
-#'   exon)
-#' @inheritParams fastq_nb_reads
-#' @inheritParams align
-#' @return Return an object of class SummarizedExperiment
-#' @details
-#' Used Bioconductor packages:
-#' \itemize{
-#' \item \strong{GenomicFeatures} to prepare the transcript database
-#' \item \strong{Rsamtools} to import SAM/BAM files in R
-#' \item \strong{GenomicAlignments} for read counting
-#' \item \strong{BiocParallel}for parallel computing
-#' }
+#'Read Counting
+#'@description Count reads by gene and by exon
+#'@param bam a vector of bam files (in the same directory) or a directory
+#'  containing one or more paths to bam files. if NULL, BAM files
+#'  in the current working directory are choosed.
+#'@param ext BAM file extension. Default is ".bam". Used only when bam is a directory
+#'@param mode counting mode. Read ?GenomicAlignments::summarizeOverlaps. Default
+#'  value is "Union". Reads that overlap any portion of exactly one feature are
+#'  counted. Reads that overlap multiple features are discarded.
+#'@param result.dir a directory to save the output.
+#'@param save logical value; if TRUE, the result is saved in result.dir.
+#'@param by One of "gene" (for counting in gene) or "exon" (for counting in
+#'  exon)
+#'@param ignore.strand A logical indicating if strand should be considered when
+#'  matching. if TRUE, allows minus strand reads to count in plus strand genes,
+#'  and vice versa. Should be FALSE for stranded RNAsequencing.
+#'@inheritParams fastq_nb_reads
+#'@inheritParams align
+#'@return Return an object of class SummarizedExperiment
+#'@details Used Bioconductor packages: \itemize{ \item \strong{GenomicFeatures}
+#'to prepare the transcript database \item \strong{Rsamtools} to import SAM/BAM
+#'files in R \item \strong{GenomicAlignments} for read counting \item
+#'\strong{BiocParallel}for parallel computing }
 #'
-#' Input files: BAM files. No need to sort the BAM files in Bioconductor version > 2.12.
-#' @export
-count_reads <- function(bam = NULL,  ext = "name_sorted.bam",
+#'Input files: BAM files. No need to sort the BAM files in Bioconductor version
+#'> 2.12.
+#'@export
+count_reads <- function(bam = NULL,  ext = ".bam",
                        by = c("gene", "exon"),
-                       result.dir = "COUNT", save = TRUE, show_progress = TRUE,
+                       result.dir = "COUNT", save = TRUE,
                        gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
-                       pairedEnd = TRUE, ignore.strand = FALSE, mode = "Union", thread = 25)
+                       pairedEnd = TRUE, ignore.strand = FALSE, mode = "Union", thread = 10)
   {
 
   by <- match.arg(by)
@@ -98,7 +97,7 @@ count_reads <- function(bam = NULL,  ext = "name_sorted.bam",
     save(se, file=se_file)
     raw_count <- SummarizedExperiment::assay(se)
     write.table(raw_count,
-                file=file.path(result.dir, "COUNT", "raw.count.txt"),
+                file=file.path(result.dir, "raw.count.txt"),
                 sep="\t", col.names=NA, row.names=TRUE)
   }
   return(se)
