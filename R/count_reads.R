@@ -1,6 +1,7 @@
 #' @include utilities.R
 NULL
-#' Count reads per genes using Bioconductor package
+#' Read Counting
+#' @description Count reads by gene and by exon
 #' @param bam a vector of bam files (in the same directory) or a directory
 #'   containing one or more paths to bam files sorted by name. if NULL, BAM
 #'   files in the current working directory are choosed.
@@ -16,8 +17,16 @@ NULL
 #' @inheritParams fastq_nb_reads
 #' @inheritParams align
 #' @return Return an object of class SummarizedExperiment
-#' @details required bioconductor packages: "GenomicFeatures", "Rsamtools",
-#'   "GenomicAlignments" and "BiocParallel".
+#' @details
+#' Used Bioconductor packages:
+#' \itemize{
+#' \item \strong{GenomicFeatures} to prepare the transcript database
+#' \item \strong{Rsamtools} to import SAM/BAM files in R
+#' \item \strong{GenomicAlignments} for read counting
+#' \item \strong{BiocParallel}for parallel computing
+#' }
+#'
+#' Input files: BAM files. No need to sort the BAM files in Bioconductor version > 2.12
 #' @export
 count_reads <- function(bam = NULL,  ext = "name_sorted.bam",
                        by = c("gene", "exon"),

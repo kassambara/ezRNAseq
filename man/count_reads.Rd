@@ -2,10 +2,10 @@
 % Please edit documentation in R/count_reads.R
 \name{count_reads}
 \alias{count_reads}
-\title{Count reads per genes using Bioconductor package}
+\title{Read Counting}
 \usage{
 count_reads(bam = NULL, ext = "name_sorted.bam", by = c("gene", "exon"),
-  result_dir = "COUNT", save = TRUE, show_progress = TRUE,
+  result.dir = "COUNT", save = TRUE, show_progress = TRUE,
   gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
   pairedEnd = TRUE, ignore.strand = FALSE, mode = "Union", thread = 25)
 }
@@ -20,9 +20,9 @@ is "name_sorted.bam". Used only when bam is a directory}
 \item{by}{One of "gene" (for counting in gene) or "exon" (for counting in
 exon)}
 
-\item{result_dir}{a directory to save the output.}
+\item{result.dir}{a directory to save the output.}
 
-\item{save}{logical value; if TRUE, the result is saved in result_dir.}
+\item{save}{logical value; if TRUE, the result is saved in result.dir.}
 
 \item{show_progress}{if TRUE, the progression is shown}
 
@@ -43,10 +43,17 @@ feature are counted. Reads that overlap multiple features are discarded.}
 Return an object of class SummarizedExperiment
 }
 \description{
-Count reads per genes using Bioconductor package
+Count reads by gene and by exon
 }
 \details{
-required bioconductor packages: "GenomicFeatures", "Rsamtools",
-  "GenomicAlignments" and "BiocParallel".
+Used Bioconductor packages:
+\itemize{
+\item \strong{GenomicFeatures} to prepare the transcript database
+\item \strong{Rsamtools} to import SAM/BAM files in R
+\item \strong{GenomicAlignments} for read counting
+\item \strong{BiocParallel}for parallel computing
+}
+
+Input files: BAM files. No need to sort the BAM files in Bioconductor version > 2.12
 }
 
