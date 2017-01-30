@@ -13,24 +13,24 @@ Depends:
     ggplot2
 Imports:
     Biobase,
+    BiocParallel,
     DESeq2,
+    GenomicAlignments,
+    GenomicFeatures,
     GenomicRanges,
     genefilter,
     limma,
     reshape2,
     rmarkdown (>= 0.8),
     S4Vectors
+    Rsamtools,
 Suggests:
     BiocInstaller,
-    BiocParallel,
     biomaRt,
     clusterProfiler,
     DOSE,
-    GenomicAlignments,
-    GenomicFeatures,
     knitr,
     ReactomePA,
-    Rsamtools,
     SummarizedExperiment
 VignetteBuilder: knitr
 URL: http://www.genomicscape.com
