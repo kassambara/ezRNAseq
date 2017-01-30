@@ -9,8 +9,8 @@ NULL
 #' @param mode counting mode. Read ?GenomicAlignments::summarizeOverlaps.
 #'   Default value is "Union". Reads that overlap any portion of exactly one
 #'   feature are counted. Reads that overlap multiple features are discarded.
-#' @param result_dir a directory to save the output.
-#' @param save logical value; if TRUE, the result is saved in result_dir.
+#' @param result.dir a directory to save the output.
+#' @param save logical value; if TRUE, the result is saved in result.dir.
 #' @param by One of "gene" (for counting in gene) or "exon" (for counting in
 #'   exon)
 #' @inheritParams fastq_nb_reads
@@ -21,7 +21,7 @@ NULL
 #' @export
 count_reads <- function(bam = NULL,  ext = "name_sorted.bam",
                        by = c("gene", "exon"),
-                       result_dir = "COUNT", save = TRUE, show_progress = TRUE,
+                       result.dir = "COUNT", save = TRUE, show_progress = TRUE,
                        gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
                        pairedEnd = TRUE, ignore.strand = FALSE, mode = "Union", thread = 25)
   {
@@ -75,8 +75,8 @@ count_reads <- function(bam = NULL,  ext = "name_sorted.bam",
   sple_names <- gsub("_name_sorted", "", sple_names)
   colnames(se) <- sple_names # Rename the samples because the current name is the file name
   # save se file
-  dir.create(result_dir, showWarnings = FALSE, recursive = TRUE)
-  se_file <- file.path(result_dir, paste0("se_", by, ".RDATA"))
+  dir.create(result.dir, showWarnings = FALSE, recursive = TRUE)
+  se_file <- file.path(result.dir, paste0("se_", by, ".RDATA"))
   if (file.exists(se_file)){
     bname <- remove_extension(basename(se_file))
     bname <- paste0(bname, "_", get_random_string(14), ".RDATA" )
