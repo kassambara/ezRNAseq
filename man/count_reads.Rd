@@ -54,6 +54,6 @@ Used Bioconductor packages:
 \item \strong{BiocParallel}for parallel computing
 }
 
-Input files: BAM files. No need to sort the BAM files in Bioconductor version > 2.12
+Input files: BAM files. No need to sort the BAM files in Bioconductor version > 2.12.
 }
 
