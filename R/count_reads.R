@@ -1,20 +1,23 @@
 #' @include utilities.R
 NULL
 #' Count reads per genes using Bioconductor package
-#' @param bam a vector of bam files (in the same directory)
-#'  or a directory containing one or more paths to bam files sorted by name.
-#' if NULL, BAM files in the current working directory are choosed.
-#' @param ext BAM file extension. For example ext = "name_sorted.bam".
-#' Default is "name_sorted.bam". Used only when bam is a directory
-#' @param mode counting mode. Read ?summarizeOverlaps
+#' @param bam a vector of bam files (in the same directory) or a directory
+#'   containing one or more paths to bam files sorted by name. if NULL, BAM
+#'   files in the current working directory are choosed.
+#' @param ext BAM file extension. For example ext = "name_sorted.bam". Default
+#'   is "name_sorted.bam". Used only when bam is a directory
+#' @param mode counting mode. Read ?GenomicAlignments::summarizeOverlaps.
+#'   Default value is "Union". Reads that overlap any portion of exactly one
+#'   feature are counted. Reads that overlap multiple features are discarded.
 #' @param result_dir a directory to save the output.
 #' @param save logical value; if TRUE, the result is saved in result_dir.
-#' @param by One of "gene" (for counting in gene) or "exon" (for counting in exon)
+#' @param by One of "gene" (for counting in gene) or "exon" (for counting in
+#'   exon)
 #' @inheritParams fastq_nb_reads
 #' @inheritParams align
-#' @return
-#' Return an object of class SummarizedExperiment
-#' @details required bioconductor packages: "GenomicFeatures", "Rsamtools", "GenomicAlignments" and "BiocParallel".
+#' @return Return an object of class SummarizedExperiment
+#' @details required bioconductor packages: "GenomicFeatures", "Rsamtools",
+#'   "GenomicAlignments" and "BiocParallel".
 #' @export
 count_reads <- function(bam = NULL,  ext = "name_sorted.bam",
                        by = c("gene", "exon"),
@@ -30,15 +33,12 @@ count_reads <- function(bam = NULL,  ext = "name_sorted.bam",
   }
   if(length(bam) == 0) stop("No BAM files specified.")
 
-  if(show_progress) cat("Checking packages for read counting... \n")
-  # Check packages and install missing ones
-  pkgs <- c("GenomicFeatures", "Rsamtools", "GenomicAlignments", "BiocParallel")
-  pkgs_miss <- pkgs[which(!pkgs %in% installed.packages()[, 1])]
-  install_pkgs(pkgs_miss, check = FALSE)
+  message("\n- Starting reads counting... \n")
 
-  if(show_progress) cat("Preparing gene model... \n")
   # 1. Prepare the gene model: Extract exons by gene
-  requireNamespace("GenomicFeatures", quietly = TRUE)
+  # ================================================
+  # time: ~ 10min
+  message("- Preparing gene model... \n")
   txdb <- GenomicFeatures::makeTxDbFromGFF(gtf, format="gtf" )
   if(by == "gene") {
     features <- GenomicFeatures::exonsBy(txdb, by="gene" )
@@ -50,24 +50,21 @@ count_reads <- function(bam = NULL,  ext = "name_sorted.bam",
   }
 
   # 2. Specify bam files
-  requireNamespace("Rsamtools", quietly = TRUE)
+  # ================================================
+  # yieldSize: control the memory. Indicates the number of reads to load at once.
+  message("- Specifying bam files... \n")
   bamfiles <- Rsamtools::BamFileList(bam, yieldSize=10000000 )
 
-
   # 3. Read counting
-  if(show_progress) cat("Read counting...\n")
-  requireNamespace("GenomicAlignments", quietly = TRUE)
-  requireNamespace("BiocParallel", quietly = TRUE)
+  # ================================================
+  message("- Read counting...\n")
   BiocParallel::register( BiocParallel::MulticoreParam(workers = thread) )
-  singleEnd = TRUE
-  fragments = FALSE
-  if(pairedEnd) {
-    singleEnd = FALSE
-    fragments = TRUE
-  }
+
+  singleEnd <- ifelse(pairedEnd, FALSE, TRUE)
+  fragments <- ifelse(pairedEnd, TRUE, FALSE)
   se <- GenomicAlignments::summarizeOverlaps(features=features,
                                              reads=bamfiles,
-                                             mode=mode,
+                                             mode=mode, # count methods.
                                              singleEnd=singleEnd,
                                              ignore.strand = ignore.strand,
                                              fragments = fragments,
@@ -87,6 +84,13 @@ count_reads <- function(bam = NULL,  ext = "name_sorted.bam",
     warnings("The file ", se_file, " already exists.", "The name ", se_file2, "has been used.")
     se_file <- se_file2
   }
-  if(save) save(se, file=se_file)
+  if(save) {
+    message("- Writing count data...\n")
+    save(se, file=se_file)
+    raw_count <- SummarizedExperiment::assay(se)
+    write.table(raw_count,
+                file=file.path(result.dir, "COUNT", "raw.count.txt"),
+                sep="\t", col.names=NA, row.names=TRUE)
+  }
   return(se)
 }

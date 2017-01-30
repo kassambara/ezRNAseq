@@ -10,14 +10,15 @@ count_reads(bam = NULL, ext = "name_sorted.bam", by = c("gene", "exon"),
   pairedEnd = TRUE, ignore.strand = FALSE, mode = "Union", thread = 25)
 }
 \arguments{
-\item{bam}{a vector of bam files (in the same directory)
- or a directory containing one or more paths to bam files sorted by name.
-if NULL, BAM files in the current working directory are choosed.}
+\item{bam}{a vector of bam files (in the same directory) or a directory
+containing one or more paths to bam files sorted by name. if NULL, BAM
+files in the current working directory are choosed.}
 
-\item{ext}{BAM file extension. For example ext = "name_sorted.bam".
-Default is "name_sorted.bam". Used only when bam is a directory}
+\item{ext}{BAM file extension. For example ext = "name_sorted.bam". Default
+is "name_sorted.bam". Used only when bam is a directory}
 
-\item{by}{One of "gene" (for counting in gene) or "exon" (for counting in exon)}
+\item{by}{One of "gene" (for counting in gene) or "exon" (for counting in
+exon)}
 
 \item{result_dir}{a directory to save the output.}
 
@@ -32,7 +33,9 @@ Default is "name_sorted.bam". Used only when bam is a directory}
 \item{ignore.strand}{A logical indicating if strand should be considered when matching.
 Used during read counting.}
 
-\item{mode}{counting mode. Read ?summarizeOverlaps}
+\item{mode}{counting mode. Read ?GenomicAlignments::summarizeOverlaps.
+Default value is "Union". Reads that overlap any portion of exactly one
+feature are counted. Reads that overlap multiple features are discarded.}
 
 \item{thread}{Number of threads to be used. This depends to the available computer ressources.}
 }
@@ -43,6 +46,7 @@ Return an object of class SummarizedExperiment
 Count reads per genes using Bioconductor package
 }
 \details{
-required bioconductor packages: "GenomicFeatures", "Rsamtools", "GenomicAlignments" and "BiocParallel".
+required bioconductor packages: "GenomicFeatures", "Rsamtools",
+  "GenomicAlignments" and "BiocParallel".
 }
 

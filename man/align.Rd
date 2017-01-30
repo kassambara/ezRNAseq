@@ -7,15 +7,15 @@
 \title{RNAseq workflow using STAR and R}
 \usage{
 rnaseq_workflow(data_dir = getwd(), samples.annotation = "samples.txt",
-  star.index = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Sequence/StarIndex/",
+  pairedEnd = TRUE, fastq.gz = TRUE,
   gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
-  result.dir = NULL, keep = c("name_sorted_bam"), pairedEnd = TRUE,
-  ignore.strand = FALSE, count_mode = "Union", thread = 10)
+  result.dir = NULL, ignore.strand = FALSE, count_mode = "Union",
+  thread = 10, ...)
 
 star_align(data_dir = getwd(), samples.annotation = "samples.txt",
   star.index = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Sequence/StarIndex/",
   result.dir = NULL, keep = c("name_sorted_bam"), pairedEnd = TRUE,
-  fastq.gz = TRUE, thread = 10)
+  fastq.gz = TRUE, thread = 10, ...)
 }
 \arguments{
 \item{data_dir}{the directory containing the data. It should contains a subdirectory called "FASTQ" which
@@ -30,14 +30,11 @@ This file should contain at least 3 columns:
 This is optional if single-end sequencing is used
 }}
 
-\item{star.index, gtf}{reference genome for STAR and annotation gtf file, respectively.}
+\item{pairedEnd}{specify if the data are paired-end sequencing data. Default is TRUE.}
+
+\item{fastq.gz}{specify if the FASTQ files are compressed. Default is TRUE.}
 
 \item{result.dir}{The absolute path of result directory.}
-
-\item{keep}{a character vector specifying the file to be kept.
-Allowed values include c("name_sorted_bam", "chr_sorted_bam", "sam" ).}
-
-\item{pairedEnd}{specify if the data are paired-end sequencing data. Default is TRUE.}
 
 \item{ignore.strand}{A logical indicating if strand should be considered when matching.
 Used during read counting.}
@@ -46,7 +43,10 @@ Used during read counting.}
 
 \item{thread}{Number of threads to be used. This depends to the available computer ressources.}
 
-\item{fastq.gz}{specify if the FASTQ files are compressed. Default is TRUE.}
+\item{star.index, gtf}{reference genome for STAR and annotation gtf file, respectively.}
+
+\item{keep}{a character vector specifying the file to be kept.
+Allowed values include c("name_sorted_bam", "chr_sorted_bam", "sam" ).}
 }
 \value{
 Three subdirectories are created: \cr

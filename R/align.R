@@ -46,12 +46,11 @@ NULL
 #' @rdname align
 #'@export
 rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.txt",
-                       star.index = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Sequence/StarIndex/",
+                            pairedEnd = TRUE, fastq.gz = TRUE,
                        gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
                        result.dir = NULL,
-                       keep = c("name_sorted_bam"),
-                       pairedEnd = TRUE, ignore.strand = FALSE, count_mode = "Union",
-                       thread = 10){
+                       ignore.strand = FALSE, count_mode = "Union",
+                       thread = 10, ...){
 
 
   # Read samples.txt file
@@ -74,53 +73,13 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
 
   # STAR Alignement
   # ++++++++++++++++++++++++++++++++++++++++
-  if(pairedEnd)
-    cmd <- with(samples, paste("STAR --genomeDir", star.index,
-                            "--readFilesIn", fastq1, fastq2,
-                            "--outSAMstrandField intronMotif",
-                            "--outFileNamePrefix", file.path(result.dir, "SAM", paste0(name, "_")),
-                            "--runThreadN", thread, sep=" " ))
-  else cmd <- with(samples, paste("STAR --genomeDir", star.index,
-                            "--readFilesIn", fastq1,
-                            "--outSAMstrandField intronMotif",
-                            "--outFileNamePrefix", file.path(result.dir, "SAM", paste0(name, "_")),
-                            "--runThreadN", thread, sep=" " ))
-
-  for(c in cmd) system(c) # Run alignment
-
-
-  # Convert SAM -> BAM file
-  # ++++++++++++++++++++++++++++++++++++++++
-  for(i in 1:nrow(samples)){
-    sam_file <- file.path(result.dir, "SAM", paste0(samples$name[i], "_Aligned.out.sam"))
-    bam_file <- file.path(result.dir, "BAM", paste0(samples$name[i], ".bam"))
-    system(paste0("samtools view -bS ", sam_file, " > ", bam_file))
-  }
-
-  # Remove or keep SAM file
-  # +++++++++++++++++++++++++++++++
-  if(!("sam" %in% keep)){
-    unlink(file.path(result.dir, "SAM"),
-           recursive = TRUE, force = TRUE)
-  }
-
-  # Organize BAM files
-  #++++++++++++++++++++++++++++++++++++++++++
-  # - sort by name for htseq-count
-  # - sort by chromosome and create index for IGV
-  setwd(file.path(result.dir, "BAM"))
-  for(sple in samples$name){
-    bam_file <- paste0(sple, ".bam")
-    system(paste0("samtools sort -n ",bam_file," ", sple,"_name_sorted"))
-    if("chr_sorted_bam" %in% keep) {
-      system(paste0("samtools sort ", bam_file," ", sple, "_sorted")) # by chromosome
-      system(paste0("samtools index ", sple,"_sorted.bam")) # index
-    }
-  }
-
+  star_align (data_dir = data_dir, samples.annotation = samples.annotation,
+              result.dir = result.dir,
+              pairedEnd = pairedEnd, fastq.gz = fastq.gz, thread = thread, ...)
 
   # Read counting using bioconductor
   # +++++++++++++++++++++++++++++++++++++++
+  setwd(file.path(result_dir, "BAM/name_sorted"))
   se <- count_reads(bam = paste0(samples$name, "_name_sorted.bam"),
                    result.dir = file.path(result.dir, "COUNT"),
                    save = FALSE,
@@ -135,7 +94,7 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
   if("group" %in% colnames(samples)) samples$group <- as.factor(samples$group)
   rownames(samples) <- as.vector(samples$name)
   se <- se[, as.vector(samples$name)] # same order as samples
-  GenomicRanges::colData(se) <- S4Vectors::DataFrame(samples) # add phenotypic data to se
+  SummarizedExperiment::colData(se) <- S4Vectors::DataFrame(samples) # add phenotypic data to se
   save(se, file = file.path(result.dir, "COUNT", "se.RDATA"))
 
   # Raw count & samples
@@ -161,7 +120,7 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
                        star.index = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Sequence/StarIndex/",
                        result.dir = NULL,
                        keep = c("name_sorted_bam"),
-                       pairedEnd = TRUE, fastq.gz = TRUE, thread = 10)
+                       pairedEnd = TRUE, fastq.gz = TRUE, thread = 10, ...)
 {
 
   # Read samples.txt file
