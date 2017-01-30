@@ -9,12 +9,12 @@
 rnaseq_workflow(data_dir = getwd(), samples.annotation = "samples.txt",
   pairedEnd = TRUE, fastq.gz = TRUE,
   gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
-  result.dir = NULL, ignore.strand = FALSE, count_mode = "Union",
+  result.dir = getwd(), ignore.strand = FALSE, count_mode = "Union",
   thread = 10, ...)
 
 star_align(data_dir = getwd(), samples.annotation = "samples.txt",
   star.index = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Sequence/StarIndex/",
-  result.dir = NULL, keep = c("name_sorted_bam"), pairedEnd = TRUE,
+  result.dir = getwd(), keep = c("name_sorted_bam"), pairedEnd = TRUE,
   fastq.gz = TRUE, thread = 10, ...)
 }
 \arguments{

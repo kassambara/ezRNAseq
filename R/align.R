@@ -48,7 +48,7 @@ NULL
 rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.txt",
                             pairedEnd = TRUE, fastq.gz = TRUE,
                        gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
-                       result.dir = NULL,
+                       result.dir = getwd(),
                        ignore.strand = FALSE, count_mode = "Union",
                        thread = 10, ...){
 
@@ -74,7 +74,7 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
 
   # Read counting using bioconductor
   # +++++++++++++++++++++++++++++++++++++++
-  setwd(file.path(result_dir, "BAM/name_sorted"))
+  setwd(file.path(result.dir, "BAM/name_sorted"))
   se <- count_reads(bam = paste0(samples$name, "_name_sorted.bam"),
                    result.dir = file.path(result.dir, "COUNT"),
                    save = FALSE,
@@ -113,7 +113,7 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
 #' @describeIn align Aligning RNAseq data using STAR software
 star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
                        star.index = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Sequence/StarIndex/",
-                       result.dir = NULL,
+                       result.dir = getwd(),
                        keep = c("name_sorted_bam"),
                        pairedEnd = TRUE, fastq.gz = TRUE, thread = 10, ...)
 {
