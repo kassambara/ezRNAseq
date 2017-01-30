@@ -54,15 +54,10 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
 
 
   # Read samples.txt file
-  samples <- read.table(file=samples.annotation,
-                        sep ="\t", header=TRUE, row.names=NULL)
+  samples <- read.delim(file=samples.annotation, header=TRUE, row.names=NULL)
 
   # Go to the directory containing the FASTQ files
   oldwd <- getwd()
-  setwd(file.path(data_dir, "FASTQ"))
-
-  if(is.null(result.dir)) result.dir = ".."
-  else result.dir = file.path("..", result.dir)
 
   # Create result dirs
   # ++++++++++++++++++++++++++++++++++++++++
@@ -75,7 +70,7 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
   # ++++++++++++++++++++++++++++++++++++++++
   star_align (data_dir = data_dir, samples.annotation = samples.annotation,
               result.dir = result.dir,
-              paicdredEnd = pairedEnd, fastq.gz = fastq.gz, thread = thread, ...)
+              pairedEnd = pairedEnd, fastq.gz = fastq.gz, thread = thread, ...)
 
   # Read counting using bioconductor
   # +++++++++++++++++++++++++++++++++++++++
@@ -130,13 +125,10 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
   oldwd <- getwd()
   setwd(file.path(data_dir, "FASTQ"))
 
-  if(is.null(result.dir)) result.dir = ".."
-
   # Create result dirs
   # ++++++++++++++++++++++++++++++++++++++++
   create_dir(file.path(result.dir, "SAM"))
   create_dir(file.path( result.dir, "BAM"))
-
 
   # STAR Alignement
   # ++++++++++++++++++++++++++++++++++++++++
