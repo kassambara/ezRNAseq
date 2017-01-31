@@ -44,7 +44,8 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
   # ++++++++++++++++++++++++++++++++++++++++
   star_align (data_dir = data_dir, samples.annotation = samples.annotation,
               result.dir = result.dir, keep = keep,
-              pairedEnd = pairedEnd, fastq.gz = fastq.gz, thread = thread, ...)
+              pairedEnd = pairedEnd, fastq.gz = fastq.gz, thread = thread,
+              star.index = star.index)
 
   # Read counting using bioconductor
   # +++++++++++++++++++++++++++++++++++++++
