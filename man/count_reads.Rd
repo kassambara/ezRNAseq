@@ -7,7 +7,8 @@
 count_reads(bam = NULL, ext = ".bam", by = c("gene", "exon"),
   result.dir = "COUNT", save = TRUE,
   gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
-  pairedEnd = TRUE, ignore.strand = FALSE, mode = "Union", thread = 10)
+  pairedEnd = TRUE, ignore.strand = FALSE, count.mode = "Union",
+  thread = 10)
 }
 \arguments{
 \item{bam}{a vector of bam files (in the same directory) or a directory
@@ -23,7 +24,7 @@ exon)}
 
 \item{save}{logical value; if TRUE, the result is saved in result.dir.}
 
-\item{gtf}{reference genome for STAR and annotation gtf file, respectively.}
+\item{gtf}{gene annotation file.}
 
 \item{pairedEnd}{specify if the data are paired-end sequencing data. Default is TRUE.}
 
@@ -31,11 +32,9 @@ exon)}
 matching. if TRUE, allows minus strand reads to count in plus strand genes,
 and vice versa. Should be FALSE for stranded RNAsequencing.}
 
-\item{mode}{counting mode. Read ?GenomicAlignments::summarizeOverlaps. Default
+\item{count.mode}{counting mode. Read ?GenomicAlignments::summarizeOverlaps. Default
 value is "Union". Reads that overlap any portion of exactly one feature are
 counted. Reads that overlap multiple features are discarded.}
-
-\item{thread}{Number of threads to be used. This depends to the available computer ressources.}
 }
 \value{
 Return an object of class SummarizedExperiment

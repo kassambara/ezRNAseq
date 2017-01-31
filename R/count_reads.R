@@ -6,18 +6,19 @@ NULL
 #'  containing one or more paths to bam files. if NULL, BAM files
 #'  in the current working directory are choosed.
 #'@param ext BAM file extension. Default is ".bam". Used only when bam is a directory
-#'@param mode counting mode. Read ?GenomicAlignments::summarizeOverlaps. Default
+#'@param count.mode counting mode. Read ?GenomicAlignments::summarizeOverlaps. Default
 #'  value is "Union". Reads that overlap any portion of exactly one feature are
 #'  counted. Reads that overlap multiple features are discarded.
 #'@param result.dir a directory to save the output.
 #'@param save logical value; if TRUE, the result is saved in result.dir.
 #'@param by One of "gene" (for counting in gene) or "exon" (for counting in
 #'  exon)
+#'@param gtf gene annotation file.
+#'@param pairedEnd specify if the data are paired-end sequencing data. Default is TRUE.
 #'@param ignore.strand A logical indicating if strand should be considered when
 #'  matching. if TRUE, allows minus strand reads to count in plus strand genes,
 #'  and vice versa. Should be FALSE for stranded RNAsequencing.
 #'@inheritParams fastq_nb_reads
-#'@inheritParams align
 #'@return Return an object of class SummarizedExperiment
 #'@details Used Bioconductor packages: \itemize{ \item \strong{GenomicFeatures}
 #'to prepare the transcript database \item \strong{Rsamtools} to import SAM/BAM
@@ -31,7 +32,7 @@ count_reads <- function(bam = NULL,  ext = ".bam",
                        by = c("gene", "exon"),
                        result.dir = "COUNT", save = TRUE,
                        gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
-                       pairedEnd = TRUE, ignore.strand = FALSE, mode = "Union", thread = 10)
+                       pairedEnd = TRUE, ignore.strand = FALSE, count.mode = "Union", thread = 10)
   {
 
   by <- match.arg(by)
@@ -72,7 +73,7 @@ count_reads <- function(bam = NULL,  ext = ".bam",
   fragments <- ifelse(pairedEnd, TRUE, FALSE)
   se <- GenomicAlignments::summarizeOverlaps(features=features,
                                              reads=bamfiles,
-                                             mode=mode, # count methods.
+                                             mode=count.mode, # count methods.
                                              singleEnd=singleEnd,
                                              ignore.strand = ignore.strand,
                                              fragments = fragments,
