@@ -24,7 +24,6 @@ ez_annotate <- function(x, host="www.ensembl.org",
   x <- unique(x)
   id_type <- .get_id_type(x)
 
-  .load_package("biomaRt")
   ensembl <- biomaRt::useMart("ENSEMBL_MART_ENSEMBL", host = host, dataset = dataset)
   annot <- biomaRt::getBM(mart = ensembl,
                  attributes = c("ensembl_gene_id", "entrezgene", "hgnc_symbol",
