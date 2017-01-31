@@ -53,7 +53,6 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
   se <- count_reads(bam = paste0(samples$name, "_name_sorted.bam"),
                    result.dir = file.path(result.dir, "COUNT"),
                    save = FALSE,
-                   show_progress = TRUE,
                    gtf = gtf, pairedEnd = pairedEnd,
                    ignore.strand = ignore.strand,
                    count.mode = count.mode, thread = thread)
