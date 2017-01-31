@@ -40,11 +40,10 @@ Repository: Bioconductor
 SystemRequirements: STAR, samtools
 Collate:
     'AllClasses.R'
-    'utilities_diffexprs.R'
-    'utilities.R'
-    'align.R'
     'all_classes.R'
     'summarize.R'
+    'utilities_diffexprs.R'
+    'utilities.R'
     'plot.R'
     'annotate.R'
     'biomart.hs.genes.R'
@@ -62,6 +61,8 @@ Collate:
     'limma.R'
     'plot_MA.R'
     'report.R'
+    'star_align.R'
+    'rnaseq_workflow.R'
     'utilities_stepProfiler.R'
     'stepProfiler.R'
 RoxygenNote: 5.0.1
