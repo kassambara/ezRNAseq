@@ -20,6 +20,7 @@ Imports:
     GenomicFeatures,
     GenomicRanges,
     genefilter,
+    ggplot2,
     ggpubr,
     limma,
     reshape2,

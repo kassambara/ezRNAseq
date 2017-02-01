@@ -6,7 +6,8 @@
 #' @param fill fill color for the bars
 #' @param ...   Add other arguments from ggbarplot to modify the plot appearance.
 #' @return Return a plot ggplot.
-
+#'
+#' @export
 plot_samples_count <- function(data, color = "white",
                                fill = "steelblue", ylab = "Total Count (x 10^7)",
                                xlab = "Sample", name.size = 7 , ...)
