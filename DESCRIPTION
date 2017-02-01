@@ -60,6 +60,7 @@ Collate:
     'install_igenome.R'
     'limma.R'
     'plot_MA.R'
+    'plot_samples_count.R'
     'report.R'
     'star_align.R'
     'rnaseq_workflow.R'
