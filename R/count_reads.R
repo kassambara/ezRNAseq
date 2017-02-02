@@ -13,6 +13,14 @@ NULL
 #'@param save logical value; if TRUE, the result is saved in result.dir.
 #'@param by One of "gene" (for counting in gene) or "exon" (for counting in
 #'  exon)
+#'@param samples.annotation the path to "samples.txt" tabulation file containing sample annotations.
+#'This file should contain at least 3 columns:
+#'\itemize{
+#'\item name: corresponding to sample name. It will be used to report the result
+#'\item fastq1: the first fastq file name for paired-end sequencing
+#'\item fastq2: the second fastq file name for paired-end sequencing.
+#'This is optional if single-end sequencing is used
+#'}
 #'@param gtf gene annotation file.
 #'@param pairedEnd specify if the data are paired-end sequencing data. Default is TRUE.
 #'@param ignore.strand A logical indicating if strand should be considered when
@@ -30,6 +38,7 @@ NULL
 #'@export
 count_reads <- function(bam = NULL,  ext = ".bam",
                        by = c("gene", "exon"),
+                       samples.annotation = NULL,
                        result.dir = "COUNT", save = TRUE,
                        gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
                        pairedEnd = TRUE, ignore.strand = FALSE, count.mode = "Union", thread = 10)
@@ -83,6 +92,18 @@ count_reads <- function(bam = NULL,  ext = ".bam",
   sple_names <- remove_extension(sple_names)
   sple_names <- gsub("_name_sorted", "", sple_names)
   colnames(se) <- sple_names # Rename the samples because the current name is the file name
+
+  # Assign sample table to the se and save the data
+  # ++++++++++++++++++++++++++++
+  if(!is.null(samples.annotation)){
+    samples <- read.delim(file=samples.annotation, header=TRUE, row.names=NULL)
+    if("order" %in% colnames(samples)) samples <- samples[order(samples$order), ]
+    if("group" %in% colnames(samples)) samples$group <- as.factor(samples$group)
+    rownames(samples) <- as.vector(samples$name)
+    se <- se[, as.vector(samples$name)] # same order as samples
+    SummarizedExperiment::colData(se) <- S4Vectors::DataFrame(samples) # add phenotypic data to se
+  }
+
   # save se file
   dir.create(result.dir, showWarnings = FALSE, recursive = TRUE)
   se_file <- file.path(result.dir, paste0("se_", by, ".RDATA"))

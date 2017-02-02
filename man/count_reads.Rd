@@ -5,7 +5,7 @@
 \title{Read Counting}
 \usage{
 count_reads(bam = NULL, ext = ".bam", by = c("gene", "exon"),
-  result.dir = "COUNT", save = TRUE,
+  samples.annotation = NULL, result.dir = "COUNT", save = TRUE,
   gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
   pairedEnd = TRUE, ignore.strand = FALSE, count.mode = "Union",
   thread = 10)
@@ -19,6 +19,15 @@ in the current working directory are choosed.}
 
 \item{by}{One of "gene" (for counting in gene) or "exon" (for counting in
 exon)}
+
+\item{samples.annotation}{the path to "samples.txt" tabulation file containing sample annotations.
+This file should contain at least 3 columns:
+\itemize{
+\item name: corresponding to sample name. It will be used to report the result
+\item fastq1: the first fastq file name for paired-end sequencing
+\item fastq2: the second fastq file name for paired-end sequencing.
+This is optional if single-end sequencing is used
+}}
 
 \item{result.dir}{a directory to save the output.}
 
