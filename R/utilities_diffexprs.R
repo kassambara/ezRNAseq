@@ -97,7 +97,7 @@
 # Get sample annotation
 .samples <- function(dds){
   if(inherits(dds, "DESeqDataSet"))
-    res <- as.data.frame(GenomicRanges::colData(dds))
+    res <- as.data.frame(SummarizedExperiment::colData(dds))
   else if("lm_fit" %in% class(dds))
     res <- as.data.frame(dds$samples)
   else stop("Can't handle an object of class ", class(dds))
@@ -131,7 +131,7 @@
 .available_groups <- function(dds, factor){
 
   if(inherits(dds, "DESeqDataSet"))
-    available.grps <- levels(GenomicRanges::colData(dds)[, factor])
+    available.grps <- levels(SummarizedExperiment::colData(dds)[, factor])
   else if("lm_fit" %in% class(dds))
     available.grps <- levels(dds$samples[, factor])
   else stop("dds must be an object of class DESeqDataSet or lm_fit.")
