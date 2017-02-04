@@ -119,7 +119,7 @@
 # else log2()
 .rlog_data <- function(dds){
   if(inherits(dds, "DESeqDataSet"))
-    res <- as.data.frame(GenomicRanges::assay(DESeq2::rlog(dds)))
+    res <- as.data.frame(SummarizedExperiment::assay(DESeq2::rlog(dds)))
   else if("lm_fit" %in% class(dds))
     res <- log2(dds$data)
   else stop("Can't handle an object of class ", class(dds))

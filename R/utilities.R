@@ -19,6 +19,16 @@ NULL
 #' @importFrom ggplot2 element_blank
 #' @importFrom grid arrow
 #' @importFrom grid unit
+#' @importFrom utils data
+#' @importFrom utils head
+#' @importFrom utils read.delim
+#' @importFrom utils write.table
+#' @importFrom stats IQR
+#' @importFrom stats mad
+#' @importFrom stats median
+#' @importFrom stats p.adjust
+#' @importFrom stats quantile
+#' @importFrom stats sd
 
 # Create a directory
 create_dir <- function(path){
