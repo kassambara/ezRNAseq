@@ -28,7 +28,7 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
                             ignore.strand = FALSE, count.mode = "Union",
                             thread = 10,
                             data_analyst = list(name = "", email = ""),
-                            data_autor = list(name = "", email = "")
+                            data_author = list(name = "", email = "")
                             )
   {
 
@@ -163,7 +163,7 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
       cat(
         "============================\n",
         "ezRNAseq R Package Workflow\n\n",
-        "Data Author: ", data_author$name, " <", data_autor$email, ">\n",
+        "Data Author: ", data_author$name, " <", data.author$email, ">\n",
         "Data Analyst: ", data_analyst$name, " <", data_analyst$email, ">\n",
         "============================\n\n",
         "Date: ", Sys.Date(), "\n",

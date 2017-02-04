@@ -10,7 +10,7 @@ rnaseq_workflow(data_dir = getwd(), samples.annotation = "samples.txt",
   gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
   result.dir = getwd(), keep = c("name_sorted_bam"),
   ignore.strand = FALSE, count.mode = "Union", thread = 10,
-  data_analyst = list(name = "", email = ""), data_autor = list(name = "",
+  data_analyst = list(name = "", email = ""), data_author = list(name = "",
   email = ""))
 }
 \arguments{
