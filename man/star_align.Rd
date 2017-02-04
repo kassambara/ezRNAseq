@@ -38,7 +38,6 @@ Allowed values include c("name_sorted_bam", "chr_sorted_bam", "sam" ).}
 \value{
 Three subdirectories are created: \cr
 \itemize{
-\item SAM: containing the output of STAR alignment program
 \item BAM: containing unsorted and sorted BAM files, and BAM index file.
 BAM comtent is sorted by read names (*_name_sorted.bam) or by chromosome (*_sorted.bam).
 The index files are of form *_sorted.bam.bai. *_name_sorted.bam files are used for read counting
@@ -54,9 +53,8 @@ Read aligning using STAR software.
 The function star_align(), requires STAR and samtools programs to work.
 Make sure that they are installed. \cr\cr
 The workflow is as follow:\cr
-1. Align all FASTQ files using STAR. SAM files are generated.\cr
-2. Convert SAM files to BAM files. Samtools program required.\cr
-3. Organize BAM files (sorting and indexing). Samtools program required.\cr
-4. Count read using Bioconductor packages: "GenomicFeatures", "Rsamtools", "GenomicAlignments" and "BiocParallel" required.\cr
+1. Align all FASTQ files using STAR. BAM files are generated.\cr
+2. Organize BAM files (sorting and indexing). Samtools program required.\cr
+3. Count read using Bioconductor packages: "GenomicFeatures", "Rsamtools", "GenomicAlignments" and "BiocParallel" required.\cr
 }
 

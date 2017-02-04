@@ -35,7 +35,6 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
 
   # Create result dirs
   # ++++++++++++++++++++++++++++++++++++++++
-  create_dir(file.path(result.dir, "SAM"))
   create_dir(file.path( result.dir, "BAM"))
   create_dir(file.path(result.dir, "COUNT"))
 

@@ -24,14 +24,12 @@ NULL
 #' The function star_align(), requires STAR and samtools programs to work.
 #' Make sure that they are installed. \cr\cr
 #' The workflow is as follow:\cr
-#' 1. Align all FASTQ files using STAR. SAM files are generated.\cr
-#' 2. Convert SAM files to BAM files. Samtools program required.\cr
-#' 3. Organize BAM files (sorting and indexing). Samtools program required.\cr
-#' 4. Count read using Bioconductor packages: "GenomicFeatures", "Rsamtools", "GenomicAlignments" and "BiocParallel" required.\cr
+#' 1. Align all FASTQ files using STAR. BAM files are generated.\cr
+#' 2. Organize BAM files (sorting and indexing). Samtools program required.\cr
+#' 3. Count read using Bioconductor packages: "GenomicFeatures", "Rsamtools", "GenomicAlignments" and "BiocParallel" required.\cr
 #'
 #' @return Three subdirectories are created: \cr
 #' \itemize{
-#' \item SAM: containing the output of STAR alignment program
 #' \item BAM: containing unsorted and sorted BAM files, and BAM index file.
 #' BAM comtent is sorted by read names (*_name_sorted.bam) or by chromosome (*_sorted.bam).
 #' The index files are of form *_sorted.bam.bai. *_name_sorted.bam files are used for read counting
@@ -58,12 +56,12 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
 
   # Create result dirs
   # ++++++++++++++++++++++++++++++++++++++++
-  create_dir(file.path(result.dir, "SAM"))
+  # create_dir(file.path(result.dir, "SAM"))
   create_dir(file.path( result.dir, "BAM"))
 
   # STAR Alignement
   # ++++++++++++++++++++++++++++++++++++++++
-  # Result = SAM file
+  # Result = BAM file
   message("\n- Starting Alignment...\n")
 
   # Option to read compressed FASTQ files
@@ -75,13 +73,15 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
                                read_file_command,
                                "--readFilesIn", fastq1, fastq2,
                                "--outSAMstrandField intronMotif",
-                               "--outFileNamePrefix", file.path(result.dir, "SAM", paste0(name, "_")),
+                               "--outFileNamePrefix", file.path(result.dir, "BAM", paste0(name, "_")),
+                               "--outSAMtype BAM Unsorted",
                                "--runThreadN", thread, sep=" " ))
   else cmd <- with(samples, paste("STAR --genomeDir", star.index,
                                   read_file_command,
                                   "--readFilesIn", fastq1,
                                   "--outSAMstrandField intronMotif",
-                                  "--outFileNamePrefix", file.path(result.dir, "SAM", paste0(name, "_")),
+                                  "--outFileNamePrefix", file.path(result.dir, "BAM", paste0(name, "_")),
+                                  "--outSAMtype BAM Unsorted",
                                   "--runThreadN", thread, sep=" " ))
 
   for(c in cmd) {
@@ -90,30 +90,30 @@ star_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
   }
 
 
-  # Renaming SAM file
+  # Renaming BAM file
   # ++++++++++++++++++++++++++++++++++++++
-  message("- Renaming SAM Files....\n")
-  initial_name <- file.path(result.dir, "SAM", paste0(samples$name, "_Aligned.out.sam"))
-  final_name <- file.path(result.dir, "SAM", paste0(samples$name, ".sam"))
+  message("- Renaming BAM Files....\n")
+  initial_name <- file.path(result.dir, "BAM", paste0(samples$name, "_Aligned.out.bam"))
+  final_name <- file.path(result.dir, "BAM", paste0(samples$name, ".bam"))
   for(i in 1:length(samples$name)) file.rename(initial_name[i], final_name[i])
 
   # Convert SAM -> BAM file
   # ++++++++++++++++++++++++++++++++++++++++
   #  ls *.sam | parallel "samtools view -bS {} > ../BAM/{.}.bam"
-  message("- Converting SAM to BAM Files...\n")
-  sam_dir <- file.path(result.dir, "SAM")
-  bam_dir <- file.path(result.dir, "BAM/{.}.bam")
-  setwd(sam_dir) # Go to SAM dir
-  cmd <- paste( 'ls',  '*.sam | parallel -t -j', thread,
-                '"samtools view -bS {} >', bam_dir, '"', sep = " ")
-  system(cmd)
+  # message("- Converting SAM to BAM Files...\n")
+  # sam_dir <- file.path(result.dir, "SAM")
+  # bam_dir <- file.path(result.dir, "BAM/{.}.bam")
+  # setwd(sam_dir) # Go to SAM dir
+  # cmd <- paste( 'ls',  '*.sam | parallel -t -j', thread,
+  #               '"samtools view -bS {} >', bam_dir, '"', sep = " ")
+  # system(cmd)
 
   # Remove or keep SAM file
   # +++++++++++++++++++++++++++++++
-  if(!("sam" %in% keep)){
-    unlink(file.path(result.dir, "SAM"),
-           recursive = TRUE, force = TRUE)
-  }
+  # if(!("sam" %in% keep)){
+  #   unlink(file.path(result.dir, "SAM"),
+  #          recursive = TRUE, force = TRUE)
+  # }
 
 
   # Organizing BAM files
