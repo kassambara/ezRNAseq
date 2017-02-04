@@ -35,6 +35,7 @@ NULL
 #'
 #'Input files: BAM files. No need to sort the BAM files in Bioconductor version
 #'> 2.12.
+#'@param thread Number of threads to be used. This depends to the available computer ressources.
 #'@export
 count_reads <- function(bam = NULL,  ext = ".bam",
                        by = c("gene", "exon"),

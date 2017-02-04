@@ -44,6 +44,8 @@ and vice versa. Should be FALSE for stranded RNAsequencing.}
 \item{count.mode}{counting mode. Read ?GenomicAlignments::summarizeOverlaps. Default
 value is "Union". Reads that overlap any portion of exactly one feature are
 counted. Reads that overlap multiple features are discarded.}
+
+\item{thread}{Number of threads to be used. This depends to the available computer ressources.}
 }
 \value{
 Return an object of class SummarizedExperiment
