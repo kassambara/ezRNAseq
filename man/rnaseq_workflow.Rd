@@ -9,7 +9,9 @@ rnaseq_workflow(data_dir = getwd(), samples.annotation = "samples.txt",
   star.index = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Sequence/StarIndex/",
   gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
   result.dir = getwd(), keep = c("name_sorted_bam"),
-  ignore.strand = FALSE, count.mode = "Union", thread = 10)
+  ignore.strand = FALSE, count.mode = "Union", thread = 10,
+  data_analyst = list(name = "", email = ""), data_autor = list(name = "",
+  email = ""))
 }
 \arguments{
 \item{data_dir}{the directory containing the data. It should contains a subdirectory called "FASTQ" which
@@ -46,6 +48,10 @@ value is "Union". Reads that overlap any portion of exactly one feature are
 counted. Reads that overlap multiple features are discarded.}
 
 \item{thread}{Number of threads to be used. This depends to the available computer ressources.}
+
+\item{data_analyst}{a list containing the name and the email of the data analyst.}
+
+\item{data_author}{a list containing the name and the email of the data author.}
 }
 \value{
 Can create three subdirectories: \cr

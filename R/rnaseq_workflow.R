@@ -5,6 +5,8 @@ NULL
 #' RNAseq Workflow. Alignment with STAR and read counting with R/Bioconductor.
 #' @inheritParams star_align
 #' @inheritParams count_reads
+#' @param data_analyst a list containing the name and the email of the data analyst.
+#' @param data_author a list containing the name and the email of the data author.
 #' @return Can create three subdirectories: \cr
 #' \itemize{
 #' \item SAM: containing the output of STAR alignment program
@@ -24,7 +26,11 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
                             gtf = "/eqmoreaux/genomes/Homo_sapiens/Ensembl/GRCh37/Annotation/Genes/genes.gtf",
                             result.dir = getwd(), keep = c("name_sorted_bam"),
                             ignore.strand = FALSE, count.mode = "Union",
-                            thread = 10){
+                            thread = 10,
+                            data_analyst = list(name = "", email = ""),
+                            data_autor = list(name = "", email = "")
+                            )
+  {
 
 
   # Read samples.txt file
@@ -156,14 +162,16 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
       sink(file.path(result.dir, "COUNT", "README.txt"))
       cat(
         "============================\n",
-        "ezRNAseq Workflow\n",
+        "ezRNAseq R Package Workflow\n\n",
+        "Data Author: ", data_author$name, " <", data_autor$email, ">\n",
+        "Data Analyst: ", data_analyst$name, " <", data_analyst$email, ">\n",
         "============================\n\n",
         "Date: ", Sys.Date(), "\n",
         "Alignment: STAR\n",
-        "Reference genome: ", star.index, "\n",
-        "Sorting BAM files: SAMtools\n",
+        "Reference Genome: ", star.index, "\n",
+        "Sorting BAM Files: SAMtools\n",
         "Counting Reads: GenomicAlignments R package | Count Mode: ", count.mode, "\n\n\n",
-        "Number of mapped reads per sample\n",
+        "Number of Mapped Reads Per Sample\n",
         "---------------------------------\n"
       )
 
