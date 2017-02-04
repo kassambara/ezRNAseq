@@ -111,6 +111,7 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
 
       # Number of mapped read counts per sample
       total.count.plot <- plot_samples_count(raw.count)
+      samples.total.count <- colSums(raw.count)
 
       # Distribution of count per sample
       count.norm <- log2(count.norm+1)
@@ -161,8 +162,17 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
         "Alignment: STAR\n",
         "Reference genome: ", star.index, "\n",
         "Sorting BAM files: SAMtools\n",
-        "Counting Reads: GenomicAlignments R package | Count Mode: ", count.mode, "\n"
+        "Counting Reads: GenomicAlignments R package | Count Mode: ", count.mode, "\n\n\n",
+        "Number of mapped reads per sample\n",
+        "---------------------------------\n"
       )
+
+      df <- data.frame(
+        samples = names(samples.total.count),
+        total_mapped_reads = samples.total.count
+      )
+      rownames(df) <- 1:nrow(df)
+      print(df)
       sink()
 
 
