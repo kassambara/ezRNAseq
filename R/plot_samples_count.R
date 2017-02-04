@@ -3,14 +3,17 @@
 #' @param data An object of class data.frame, matrix or SummarizedExperiment.
 #' @param name.size Change the sample name size
 #' @inheritParams ggpubr::ggbarplot
+#' @inheritParams ggpubr::ggpar
 #' @param fill fill color for the bars
 #' @param ...   Add other arguments from ggbarplot to modify the plot appearance.
 #' @return Return a plot ggplot.
 #'
 #' @export
 plot_samples_count <- function(data, color = "white",
-                               fill = "steelblue", ylab = "Total Count (x 10^7)",
-                               xlab = "Sample", name.size = 7 , ...)
+                               fill = "steelblue",
+                               main = "Total count per sample",
+                               ylab = "Number of mapped reads (x10^7)",
+                               xlab = "Sample", name.size = 8 , ...)
 
 {
 
@@ -34,6 +37,7 @@ plot_samples_count <- function(data, color = "white",
     ggpubr::ggbarplot(res_frame, x = "name" , y = "count",
                       color = color , fill = fill,
                       xtickslab.rt = 45, font.tickslab= name.size,
+                      main = main,
                       ylab = ylab, xlab = xlab, ...)
 
 }

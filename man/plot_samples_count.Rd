@@ -5,7 +5,8 @@
 \title{Plot Samples Count}
 \usage{
 plot_samples_count(data, color = "white", fill = "steelblue",
-  ylab = "Total Count (x 10^7)", xlab = "Sample", name.size = 7, ...)
+  main = "Total count per sample", ylab = "Number of mapped reads (x10^7)",
+  xlab = "Sample", name.size = 8, ...)
 }
 \arguments{
 \item{data}{An object of class data.frame, matrix or SummarizedExperiment.}
@@ -13,6 +14,14 @@ plot_samples_count(data, color = "white", fill = "steelblue",
 \item{color}{outline and fill colors.}
 
 \item{fill}{fill color for the bars}
+
+\item{main}{plot main title.}
+
+\item{ylab}{character vector specifying y axis labels. Use ylab = FALSE to
+hide ylab.}
+
+\item{xlab}{character vector specifying x axis labels, respectively. Use xlab
+= FALSE to hide xlab.}
 
 \item{name.size}{Change the sample name size}
 
