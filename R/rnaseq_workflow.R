@@ -110,7 +110,7 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
   message("- Quality Control...\n")
   nsamples <- ncol(count.norm)
   if(nsamples >= 2){
-      expressed.genes <- rowSums(raw.count)
+      expressed.genes <- rowSums(raw.count) > 0
       raw.count <- raw.count[expressed.genes, , drop = FALSE]
       count.norm <- count.norm[expressed.genes, , drop = FALSE]
       rld.data <- rld.data[expressed.genes, , drop = FALSE]
