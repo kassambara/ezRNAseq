@@ -68,14 +68,106 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
 
   # Raw count & samples
   # ++++++++++++++++++++++++++++
-  raw_count <- SummarizedExperiment::assay(se)
+  message("- Writing raw counts...\n")
+  raw.count <- as.data.frame(SummarizedExperiment::assay(se))
   samples <- as.data.frame(SummarizedExperiment::colData(se) )
-  write.table(raw_count,
+  write.table(raw.count,
               file=file.path(result.dir, "COUNT", "raw.count.txt"),
               sep="\t", col.names=NA, row.names=TRUE)
   write.table(samples,
               file=file.path(result.dir, "COUNT", "samples.txt"),
               sep="\t", col.names=NA, row.names=TRUE)
+
+  # Normalized count for sequencing depth
+  # ++++++++++++++++++++++++++++
+  # For bar plot
+  message("- Writing normalized counts...\n")
+  BiocParallel::register( BiocParallel::MulticoreParam(workers = thread) )
+  dds <- DESeq2::DESeqDataSet(se, design = ~1)
+  dds <- DESeq2::estimateSizeFactors( dds )
+  count.norm <- as.data.frame(round(DESeq2::counts(dds, normalized=TRUE),2))
+  write.table(count.norm,
+              file=file.path(result.dir, "COUNT", "count.normalized.txt"),
+              sep="\t", col.names=NA, row.names=TRUE)
+
+  # rlog-transformed data: variance stabilization
+  # ++++++++++++++++++++++++++++
+  # - FOR PCA, Clustering, visualization
+  message("- Writing rlog data...\n")
+  rld <- DESeq2::rlog(dds)
+  rld.data <- SummarizedExperiment::assay(rld)
+  write.table(rld.data,
+              file=file.path(result.dir, "COUNT", "count.rlog.txt"),
+              sep="\t", col.names=NA, row.names=TRUE)
+
+  # Quality Control
+  # ++++++++++++++++++++++++++++
+  message("- Quality Control...\n")
+  nsamples <- ncol(count.norm)
+  if(nsamples >= 2){
+      expressed.genes <- rowSums(raw.count)
+      raw.count <- raw.count[expressed.genes, , drop = FALSE]
+      count.norm <- count.norm[expressed.genes, , drop = FALSE]
+      rld.data <- rld.data[expressed.genes, , drop = FALSE]
+
+      # Number of mapped read counts per sample
+      total.count.plot <- plot_samples_count(raw.count)
+
+      # Distribution of count per sample
+      count.norm <- log2(count.norm+1)
+      mcount <- tidyr::gather(count.norm, key = "samples", value = "count")
+      legend. <- ifelse(nsamples > 30, "none", "bottom")
+      count.dist.plot <- ggpubr::ggdensity(mcount, x = "count", color = "samples",
+                                      main = "Count distribution per sample",
+                                      xlab = "log2(count)", ylab = "Density",
+                                      legend = legend.)
+
+
+      # For heatmap and PCA
+      # select genes with high sd and genes with expression > 5 in at least 10%
+      expressed.genes <- genefilter::genefilter(rld.data,
+                                                genefilter::pOverA(p = 0.1, 5))
+      rld.data <- rld.data[expressed.genes, ]
+      sds <- genefilter::rowSds(rld.data)
+      top.var.genes <- head( order( sds, decreasing = TRUE ), 2000 )
+      rld.data <- rld.data[top.var.genes, ]
+
+      res.pca <- FactoMineR::PCA(t(rld.data), graph = FALSE)
+      pca.plot <- factoextra::fviz_pca_ind(res.pca, repel = TRUE)
+
+
+      grDevices::pdf(file.path(result.dir, "COUNT", "quality.control.pdf"))
+        print(total.count.plot)
+        print(count.sist.plot)
+        print(pca.plot)
+
+        ComplexHeatmap::Heatmap( scale(t(rld.data)), name = "Exprs",
+                                 show_row_names = FALSE, show_column_names = TRUE,
+                                 show_row_dend = FALSE, show_column_dend = TRUE,
+                                 cluster_columns = TRUE, cluster_rows = TRUE,
+                                 clustering_method_columns = "complete", clustering_method_rows = "complete",
+                                 column_names_gp = gpar(fontsize = 7),
+                                 column_title = "Heatmap"
+
+        )
+      grDevices::dev.off()
+
+      # Read Me
+      sink(file.path(result.dir, "COUNT", "README.txt"))
+      cat(
+        "============================\n",
+        "ezRNAseq Workflow\n",
+        "============================\n\n",
+        "Date: ", Sys.Date(), "\n",
+        "Alignment: STAR\n",
+        "Reference genome: ", star.index, "\n",
+        "Sorting BAM files: SAMtools\n",
+        "Counting Reads: GenomicAlignments R package | Count Mode: ", count.mode, "\n"
+      )
+      sink()
+
+
+  }
 
 
   # Working with count data
