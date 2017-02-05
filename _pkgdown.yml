@@ -1,0 +1,15 @@
+templates:
+  params:
+    bootswatch: flatly
+
+reference:
+  - title: RNA Sequencing Workflow
+    desc:  Workflow for analyzing RNAseq data
+    contents:
+      - rnaseq_workflow
+      - star_align
+      - count_reads
+      - normalize_counts
+      - check_count_data
+
+
