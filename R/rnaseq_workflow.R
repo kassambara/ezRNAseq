@@ -144,7 +144,7 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
 
       grDevices::pdf(file.path(result.dir, "COUNT", "quality.control.pdf"))
         print(total.count.plot)
-        print(count.sist.plot)
+        print(count.dist.plot)
         print(pca.plot)
 
         ComplexHeatmap::Heatmap( scale(t(rld.data)), name = "Exprs",
