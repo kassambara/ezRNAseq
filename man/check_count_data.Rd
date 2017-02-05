@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_count_data.R
 \name{check_count_data}
 \alias{check_count_data}
-\title{Normalize Counts Data Using DESeq2}
+\title{Count Data Quality Assessment}
 \usage{
 check_count_data(data, result.dir = "COUNT")
 }
