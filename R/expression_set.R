@@ -86,7 +86,7 @@ build_eset <- function(exprs_file, annotation = character(), remove_tpl = FALSE)
     stop("The row names of 'label_description.txt' must be identical ",
          "to the column names of 'samples.txt'.")
   # Create phenoData
-  phenoData <- new("AnnotatedDataFrame", data = pData, varMetadata = label_desc)
+  phenoData <- methods::new("AnnotatedDataFrame", data = pData, varMetadata = label_desc)
 
   # Experiment description
   # ++++++++++++++
@@ -98,7 +98,7 @@ build_eset <- function(exprs_file, annotation = character(), remove_tpl = FALSE)
     for(i in 1:length(d)) others[[i]] <- exp_desc[d[i], 1]
     names(others) <- d
   }
-  experimentData <- new("MIAME",
+  experimentData <- methods::new("MIAME",
                         name = exp_desc["name", 1],
                         lab = exp_desc["lab", 1],
                         contact=exp_desc["contact", 1],

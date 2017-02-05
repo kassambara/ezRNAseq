@@ -113,4 +113,17 @@ Read counting using Bioconductor package
    
 - SummarizedExperiment
     
+    
+Functions
+-------------------
+    
+    
+- star_align(): Align reads with STAR
+- count_reads(): Counting reads using R/Bioconductor
+- normalize_counts(): Normalizing count with DESeq2. Creates count.norm.txt and rlog.data.txt.
+- check_count_data(): Data quality assessment; 
+   
+rnaseq_workflow(): Runs the RNAseq workflow: align, count, normalize and check.
+    
+    
 
