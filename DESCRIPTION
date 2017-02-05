@@ -26,6 +26,7 @@ Imports:
     ggplot2,
     ggpubr,
     grDevices,
+    grid,
     limma,
     reshape2,
     rmarkdown (>= 0.8),

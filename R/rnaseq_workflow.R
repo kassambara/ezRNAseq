@@ -152,7 +152,7 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
                                  show_row_dend = FALSE, show_column_dend = TRUE,
                                  cluster_columns = TRUE, cluster_rows = TRUE,
                                  clustering_method_columns = "complete", clustering_method_rows = "complete",
-                                 column_names_gp = gpar(fontsize = 7),
+                                 column_names_gp = grid::gpar(fontsize = 7),
                                  column_title = "Heatmap"
 
         )
