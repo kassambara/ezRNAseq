@@ -88,11 +88,11 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
   # ++++++++++++++++++++++++++++
   count.data <- normalize_counts(se, thread = thread,
                                   result.dir = file.path(result.dir, "COUNT"), save = TRUE)
+  count.norm <- count.data$count.norm
 
   # Quality Control
   # ++++++++++++++++++++++++++++
   check_count_data <- function(count.data, result.dir = file.path(result.dir, "COUNT"))
-
   nsamples <- ncol(count.norm)
   if(nsamples >= 2){
 
