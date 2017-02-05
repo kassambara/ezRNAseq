@@ -18,7 +18,7 @@ setClass("DE_Results", contains = "DataFrame")
 #' @rdname DE_Results
 #' @export
 DE_Results <- function(DataFrame) {
-  new("DE_Results", DataFrame)
+  methods::new("DE_Results", DataFrame)
 }
 
 
