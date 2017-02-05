@@ -5,8 +5,8 @@ NULL
 #' RNAseq Workflow. Alignment with STAR and read counting with R/Bioconductor.
 #' @inheritParams star_align
 #' @inheritParams count_reads
-#' @param data_analyst a list containing the name and the email of the data analyst.
-#' @param data_author a list containing the name and the email of the data author.
+#' @param data.analyst a list containing the name and the email of the data analyst.
+#' @param data.author a list containing the name and the email of the data author.
 #' @return Can create three subdirectories: \cr
 #' \itemize{
 #' \item SAM: containing the output of STAR alignment program
@@ -27,8 +27,8 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
                             result.dir = getwd(), keep = c("name_sorted_bam"),
                             ignore.strand = FALSE, count.mode = "Union",
                             thread = 10,
-                            data_analyst = list(name = "", email = ""),
-                            data_author = list(name = "", email = "")
+                            data.analyst = list(name = "", email = ""),
+                            data.author = list(name = "", email = "")
                             )
   {
 
@@ -141,21 +141,21 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
       res.pca <- FactoMineR::PCA(t(rld.data), graph = FALSE)
       pca.plot <- factoextra::fviz_pca_ind(res.pca, repel = TRUE)
 
+      heatmap. <- ComplexHeatmap::Heatmap( scale(t(rld.data)), name = "Exprs",
+                               show_row_names = FALSE, show_column_names = TRUE,
+                               show_row_dend = FALSE, show_column_dend = TRUE,
+                               cluster_columns = TRUE, cluster_rows = TRUE,
+                               clustering_method_columns = "complete", clustering_method_rows = "complete",
+                               column_names_gp = grid::gpar(fontsize = 7),
+                               column_title = "Heatmap"
+                               )
+
 
       grDevices::pdf(file.path(result.dir, "COUNT", "quality.control.pdf"))
         print(total.count.plot)
         print(count.dist.plot)
         print(pca.plot)
-
-        ComplexHeatmap::Heatmap( scale(t(rld.data)), name = "Exprs",
-                                 show_row_names = FALSE, show_column_names = TRUE,
-                                 show_row_dend = FALSE, show_column_dend = TRUE,
-                                 cluster_columns = TRUE, cluster_rows = TRUE,
-                                 clustering_method_columns = "complete", clustering_method_rows = "complete",
-                                 column_names_gp = grid::gpar(fontsize = 7),
-                                 column_title = "Heatmap"
-
-        )
+        print(heatmap.)
       grDevices::dev.off()
 
       # Read Me
@@ -163,8 +163,8 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
       cat(
         "============================\n",
         "ezRNAseq R Package Workflow\n\n",
-        "Data Author: ", data_author$name, " <", data.author$email, ">\n",
-        "Data Analyst: ", data_analyst$name, " <", data_analyst$email, ">\n",
+        "Data Author: ", data.author$name, " <", data.author$email, ">\n",
+        "Data Analyst: ", data.analyst$name, " <", data.analyst$email, ">\n",
         "============================\n\n",
         "Date: ", Sys.Date(), "\n",
         "Alignment: STAR\n",
