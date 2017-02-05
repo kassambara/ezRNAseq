@@ -28,6 +28,7 @@ Imports:
     grDevices,
     grid,
     limma,
+    methods,
     reshape2,
     rmarkdown (>= 0.8),
     Rsamtools,
@@ -49,7 +50,6 @@ Repository: Bioconductor
 SystemRequirements: STAR, samtools
 Collate:
     'AllClasses.R'
-    'all_classes.R'
     'summarize.R'
     'utilities_diffexprs.R'
     'utilities.R'
