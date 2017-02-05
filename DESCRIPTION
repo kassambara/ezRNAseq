@@ -57,6 +57,7 @@ Collate:
     'annotate.R'
     'biomart.hs.genes.R'
     'count_reads.R'
+    'create_samples_file.R'
     'create_star_index.R'
     'distribution.R'
     'expressed.R'
