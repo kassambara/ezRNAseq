@@ -15,7 +15,7 @@ create_samples_file(fastq_dir = "FASTQ", fastq1_pattern = "_R1.fastq.gz",
 \item{fastq2_pattern}{character string in the fastq2 files (for paired-end sequencing).}
 }
 \value{
-Create a samples.txt file in the working directory.
+Create a samples.txt file in the working directory. It returns also a data.frame as an invisible object.
 }
 \description{
 Create samples annotation file according fastq files contained in a FASTQ directory.

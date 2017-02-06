@@ -3,7 +3,7 @@
 #'@param fastq_dir path to the directory containing the fastq files.
 #'@param fastq1_pattern character string in the fastq1 files
 #'@param fastq2_pattern character string in the fastq2 files (for paired-end sequencing).
-#'@return Create a samples.txt file in the working directory.
+#'@return Create a samples.txt file in the working directory. It returns also a data.frame as an invisible object.
 #'@export
 create_samples_file <- function(fastq_dir = "FASTQ",
                                 fastq1_pattern = "_R1.fastq.gz",
@@ -40,4 +40,5 @@ create_samples_file <- function(fastq_dir = "FASTQ",
               sep="\t", row.names=FALSE)
 
   message("Sample annotation file saved at: ", file.path(getwd(), "samples.txt\n"))
+  invisible(samples.data)
 }
