@@ -14,7 +14,7 @@ NULL
 #'  rlog-transformed data: variance stabilization. To be used for visualization
 #'  such as PCA and clustering. }
 #'@export
-normalize_counts <- function(data, thread = 10, result.dir = "COUNT", save = TRUE){
+normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TRUE){
 
   BiocParallel::register( BiocParallel::MulticoreParam(workers = thread) )
   if(inherits(data, "RangedSummarizedExperiment"))
@@ -48,6 +48,9 @@ normalize_counts <- function(data, thread = 10, result.dir = "COUNT", save = TRU
 
   if(save){
     dir.create(result.dir, showWarnings = FALSE, recursive = TRUE)
+    write.table(raw.count,
+                file=file.path(result.dir,  "raw.count.txt"),
+                sep="\t", col.names=NA, row.names=TRUE)
     write.table(count.norm,
                 file=file.path(result.dir,  "count.normalized.txt"),
                 sep="\t", col.names=NA, row.names=TRUE)

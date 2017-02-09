@@ -4,16 +4,16 @@
 \alias{normalize_counts}
 \title{Normalize Counts Data Using DESeq2}
 \usage{
-normalize_counts(data, thread = 10, result.dir = "COUNT", save = TRUE)
+normalize_counts(data, result.dir = "COUNT", thread = 10, save = TRUE)
 }
 \arguments{
 \item{data}{an object of class data.frame, matrix, SummarizedExmeriment or
 DESeqDataSet containing raw counts}
 
+\item{result.dir}{a directory to save the output.}
+
 \item{thread}{Number of threads to be used. This depends to the available
 computer ressources.}
-
-\item{result.dir}{a directory to save the output.}
 
 \item{save}{logical value; if TRUE, the results are saved in result.dir.}
 }
