@@ -86,14 +86,15 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
   # - Normalizing count for sequencing depth: can be used for bar plots
   # - rlog-transformed data: variance stabilization. FOR PCA, Clustering, visualization
   # ++++++++++++++++++++++++++++
-  count.data <- normalize_counts(se, thread = thread,
-                                  result.dir = file.path(result.dir, "COUNT"), save = TRUE)
-  count.norm <- count.data$count.norm
+  count.data <- try(normalize_counts(se, thread = thread,
+                                  result.dir = file.path(result.dir, "COUNT"), save = TRUE))
 
   # Quality Control
   # ++++++++++++++++++++++++++++
-  check_count_data <- function(count.data, result.dir = file.path(result.dir, "COUNT"))
-  nsamples <- ncol(count.norm)
+  if(!inherits(count.data, "try-error"))
+    check_count_data(count.data, result.dir = file.path(result.dir, "COUNT"))
+
+  nsamples <- ncol(raw.count)
   if(nsamples >= 2){
 
       # Read Me
