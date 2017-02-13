@@ -5,7 +5,7 @@
 \title{Normalize Counts Data Using DESeq2}
 \usage{
 normalize_counts(data, result.dir = "COUNT", thread = 10, save = TRUE,
-  size.factor.type = c("iterate", "ratio"))
+  size.factor.type = c("ratio", "iterate"))
 }
 \arguments{
 \item{data}{an object of class data.frame, matrix, SummarizedExmeriment or
@@ -32,11 +32,12 @@ model.}
 Return an object of class SummarizedExperiment.
 
 returns a list containing the following components: \itemize{ \item
- count.norm: Normalized count for sequencing depth \item count.rlog:
- rlog-transformed data for variance stabilization. Data are in log2 scale.
- \item count.vst: count data after variance stabilizing transformation (vst).
- Data are in log2 scale.} rlog and vst data should be used for visualization
- such, PCA and clustering.
+ count.norm: Normalized count for sequencing depth. The default method for
+ estimating the size factr is "ratio".\item count.rlog: rlog-transformed
+ data for variance stabilization. Data are in log2 scale. \item count.vst:
+ count data after variance stabilizing transformation (vst). Data are in log2
+ scale.} rlog and vst data should be used for visualization such, PCA and
+ clustering.
 }
 \description{
 Normalize counts Data using DESeq2 pipeline. Generates 3

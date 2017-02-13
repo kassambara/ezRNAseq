@@ -21,14 +21,15 @@ NULL
 #'  a size factor vector by numerically optimizing the likelihood of the ~1
 #'  model.
 #'@return returns a list containing the following components: \itemize{ \item
-#'  count.norm: Normalized count for sequencing depth \item count.rlog:
-#'  rlog-transformed data for variance stabilization. Data are in log2 scale.
-#'  \item count.vst: count data after variance stabilizing transformation (vst).
-#'  Data are in log2 scale.} rlog and vst data should be used for visualization
-#'  such, PCA and clustering.
+#'  count.norm: Normalized count for sequencing depth. The default method for
+#'  estimating the size factr is "ratio".\item count.rlog: rlog-transformed
+#'  data for variance stabilization. Data are in log2 scale. \item count.vst:
+#'  count data after variance stabilizing transformation (vst). Data are in log2
+#'  scale.} rlog and vst data should be used for visualization such, PCA and
+#'  clustering.
 #'@export
 normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TRUE,
-                             size.factor.type = c("iterate", "ratio"))
+                             size.factor.type = c("ratio", "iterate"))
 
   {
   size.factor.type <- match.arg(size.factor.type)
