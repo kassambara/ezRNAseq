@@ -33,11 +33,12 @@ Return an object of class SummarizedExperiment.
 
 returns a list containing the following components: \itemize{ \item
  count.norm: Normalized count for sequencing depth. The default method for
- estimating the size factr is "ratio".\item count.rlog: rlog-transformed
- data for variance stabilization. Data are in log2 scale. \item count.vst:
- count data after variance stabilizing transformation (vst). Data are in log2
- scale.} rlog and vst data should be used for visualization such, PCA and
- clustering.
+ estimating the size factr is "ratio".\item count.rlog: rlog-transformed data
+ for variance stabilization. Data are in log2 scale. \item count.vst: count
+ data after variance stabilizing transformation (vst). Data are in log2
+ scale. \item count.fpkm: count data in fragments per kilobase per million
+ mapped fragments.} rlog and vst data should be used for visualization such,
+ PCA and clustering.
 }
 \description{
 Normalize counts Data using DESeq2 pipeline. Generates 3

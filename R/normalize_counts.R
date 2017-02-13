@@ -22,11 +22,12 @@ NULL
 #'  model.
 #'@return returns a list containing the following components: \itemize{ \item
 #'  count.norm: Normalized count for sequencing depth. The default method for
-#'  estimating the size factr is "ratio".\item count.rlog: rlog-transformed
-#'  data for variance stabilization. Data are in log2 scale. \item count.vst:
-#'  count data after variance stabilizing transformation (vst). Data are in log2
-#'  scale.} rlog and vst data should be used for visualization such, PCA and
-#'  clustering.
+#'  estimating the size factr is "ratio".\item count.rlog: rlog-transformed data
+#'  for variance stabilization. Data are in log2 scale. \item count.vst: count
+#'  data after variance stabilizing transformation (vst). Data are in log2
+#'  scale. \item count.fpkm: count data in fragments per kilobase per million
+#'  mapped fragments.} rlog and vst data should be used for visualization such,
+#'  PCA and clustering.
 #'@export
 normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TRUE,
                              size.factor.type = c("ratio", "iterate"))
@@ -70,6 +71,10 @@ normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TR
   vst. <- DESeq2::varianceStabilizingTransformation(dds)
   count.vst <- SummarizedExperiment::assay(vst.)
 
+  # FPKM
+  # ++++++++++++++++++++++++++++
+  count.fpkm <- try(DESeq2::fpkm(dds))
+
 
   if(save){
     dir.create(result.dir, showWarnings = FALSE, recursive = TRUE)
@@ -85,10 +90,13 @@ normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TR
     write.table(count.vst,
                 file=file.path(result.dir, "count.vst.txt"),
                 sep="\t", col.names=NA, row.names=TRUE)
+    write.table(count.fpkm,
+                file=file.path(result.dir, "count.fpkm.txt"),
+                sep="\t", col.names=NA, row.names=TRUE)
   }
 
   res <- list(raw.count = raw.count, count.norm = count.norm,
-              count.rlog = count.rlog, count.vst = count.vst)
+              count.rlog = count.rlog, count.vst = count.vst, count.fpkm = count.fpkm)
   res <- structure(res, class = c("list", "normalize_counts"))
   invisible(res)
 }
