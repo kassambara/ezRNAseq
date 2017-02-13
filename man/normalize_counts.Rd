@@ -4,7 +4,8 @@
 \alias{normalize_counts}
 \title{Normalize Counts Data Using DESeq2}
 \usage{
-normalize_counts(data, result.dir = "COUNT", thread = 10, save = TRUE)
+normalize_counts(data, result.dir = "COUNT", thread = 10, save = TRUE,
+  size.factor.type = c("iterate", "ratio"))
 }
 \arguments{
 \item{data}{an object of class data.frame, matrix, SummarizedExmeriment or
@@ -16,16 +17,30 @@ DESeqDataSet containing raw counts}
 computer ressources.}
 
 \item{save}{logical value; if TRUE, the results are saved in result.dir.}
+
+\item{size.factor.type}{arguments to be passed to the function
+DESeq2::estimateSizeFactors. Either "ratio" or "iterate".  "ratio" uses the
+standard median ratio method introduced in DESeq. The size factor is the
+median ratio of the sample over a pseudosample: for each gene, the geometric
+mean of all samples. "iterate" offers an alternative estimator, which can be
+used even when all genes contain a sample with a zero. This estimator
+iterates between estimating the dispersion with a design of ~1, and finding
+a size factor vector by numerically optimizing the likelihood of the ~1
+model.}
 }
 \value{
 Return an object of class SummarizedExperiment.
 
 returns a list containing the following components: \itemize{ \item
  count.norm: Normalized count for sequencing depth \item count.rlog:
- rlog-transformed data: variance stabilization. To be used for visualization
- such as PCA and clustering. }
+ rlog-transformed data for variance stabilization. Data are in log2 scale.
+ \item count.vst: count data after variance stabilizing transformation (vst).
+ Data are in log2 scale.} rlog and vst data should be used for visualization
+ such, PCA and clustering.
 }
 \description{
-Normalize Counts Data Using DESeq2.
+Normalize counts Data using DESeq2 pipeline. Generates 3
+ datasets: normalized count data for sequencing data; ii) rlog and iii) VST
+ transformed data for data visualization: clustering, heatmap, PCA, ....
 }
 

@@ -1,7 +1,9 @@
 #' @include utilities.R
 NULL
 #'Normalize Counts Data Using DESeq2
-#'@description Normalize Counts Data Using DESeq2.
+#'@description Normalize counts Data using DESeq2 pipeline. Generates 3
+#'  datasets: normalized count data for sequencing data; ii) rlog and iii) VST
+#'  transformed data for data visualization: clustering, heatmap, PCA, ....
 #'@param data an object of class data.frame, matrix, SummarizedExmeriment or
 #'  DESeqDataSet containing raw counts
 #'@return Return an object of class SummarizedExperiment.
@@ -9,13 +11,27 @@ NULL
 #'  computer ressources.
 #'@param result.dir a directory to save the output.
 #'@param save logical value; if TRUE, the results are saved in result.dir.
+#'@param size.factor.type arguments to be passed to the function
+#'  DESeq2::estimateSizeFactors. Either "ratio" or "iterate".  "ratio" uses the
+#'  standard median ratio method introduced in DESeq. The size factor is the
+#'  median ratio of the sample over a pseudosample: for each gene, the geometric
+#'  mean of all samples. "iterate" offers an alternative estimator, which can be
+#'  used even when all genes contain a sample with a zero. This estimator
+#'  iterates between estimating the dispersion with a design of ~1, and finding
+#'  a size factor vector by numerically optimizing the likelihood of the ~1
+#'  model.
 #'@return returns a list containing the following components: \itemize{ \item
 #'  count.norm: Normalized count for sequencing depth \item count.rlog:
-#'  rlog-transformed data: variance stabilization. To be used for visualization
-#'  such as PCA and clustering. }
+#'  rlog-transformed data for variance stabilization. Data are in log2 scale.
+#'  \item count.vst: count data after variance stabilizing transformation (vst).
+#'  Data are in log2 scale.} rlog and vst data should be used for visualization
+#'  such, PCA and clustering.
 #'@export
-normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TRUE){
+normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TRUE,
+                             size.factor.type = c("iterate", "ratio"))
 
+  {
+  size.factor.type <- match.arg(size.factor.type)
   BiocParallel::register( BiocParallel::MulticoreParam(workers = thread) )
   if(inherits(data, "RangedSummarizedExperiment"))
     dds <- DESeq2::DESeqDataSet(data, design = ~1)
@@ -36,7 +52,7 @@ normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TR
   # ++++++++++++++++++++++++++++
   # For bar plot
   message("- Creating normalized counts for sequencing depth...\n")
-  dds <- DESeq2::estimateSizeFactors( dds )
+  dds <- DESeq2::estimateSizeFactors( dds, type = size.factor.type )
   count.norm <- as.data.frame(round(DESeq2::counts(dds, normalized=TRUE),2))
 
   # rlog-transformed data: variance stabilization
@@ -45,6 +61,14 @@ normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TR
   message("- Creating rlog data...\n")
   rld <- DESeq2::rlog(dds)
   count.rlog <- SummarizedExperiment::assay(rld)
+
+  # Variance stabilizing transformation
+  # ++++++++++++++++++++++++++++
+  # - FOR PCA, Clustering, visualization
+  message("- Creating variance stabilizing transformattion data...\n")
+  vst. <- DESeq2::varianceStabilizingTransformation(dds)
+  count.vst <- SummarizedExperiment::assay(vst.)
+
 
   if(save){
     dir.create(result.dir, showWarnings = FALSE, recursive = TRUE)
@@ -57,9 +81,13 @@ normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TR
     write.table(count.rlog,
                 file=file.path(result.dir, "count.rlog.txt"),
                 sep="\t", col.names=NA, row.names=TRUE)
+    write.table(count.vst,
+                file=file.path(result.dir, "count.vst.txt"),
+                sep="\t", col.names=NA, row.names=TRUE)
   }
 
-  res <- list(raw.count = raw.count, count.norm = count.norm, count.rlog = count.rlog)
+  res <- list(raw.count = raw.count, count.norm = count.norm,
+              count.rlog = count.rlog, count.vst = count.vst)
   res <- structure(res, class = c("list", "normalize_counts"))
   invisible(res)
 }
