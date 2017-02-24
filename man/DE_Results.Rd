@@ -2,6 +2,7 @@
 % Please edit documentation in R/AllClasses.R
 \docType{class}
 \name{DE_Results-class}
+\alias{DE_Results-class}
 \alias{DE_Results}
 \alias{DE_Results-class}
 \title{DE_Results object and constructor}
@@ -18,4 +19,3 @@ a DE_Results object
 DE_Results extends the DataFrame class of S4Vectors. It is used by \code{\link{lm_results}}
 to wrap up the results table. This constructor function would not typically be used by "end users".
 }
-

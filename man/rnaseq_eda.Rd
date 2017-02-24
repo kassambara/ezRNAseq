@@ -14,4 +14,3 @@ rnaseq_eda(se, result_file)
 \description{
 Create an html file containing some exploratory data analysis
 }
-

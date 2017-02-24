@@ -37,4 +37,3 @@ or 0 (if not expressed).
 Identification of expressed genes in each cell population.
 Expressed genes in a given cell population is defined as genes with average expression above a given cutoff.
 }
-

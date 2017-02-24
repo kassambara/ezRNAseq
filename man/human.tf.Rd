@@ -2,8 +2,8 @@
 % Please edit documentation in R/human.tf.R
 \docType{data}
 \name{human.tf}
-\alias{h.tf}
 \alias{human.tf}
+\alias{h.tf}
 \title{Census of human transcription factors}
 \format{A data frame with 6 columns and 1391 rows coorresponding to genes.}
 \source{
@@ -23,4 +23,3 @@ Census list of 1391 human DNA-binding transcription factors as described by Vaqu
  head(human.tf)
 }
 }
-

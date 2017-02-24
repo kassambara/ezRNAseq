@@ -46,4 +46,3 @@ and by \bold{multiple descriptive statistics} at the same time. For example comp
 mean expression and the SD of each gene by sample groups.
 }
 }
-

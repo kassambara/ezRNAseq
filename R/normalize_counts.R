@@ -29,7 +29,8 @@ NULL
 #'  mapped fragments.} rlog and vst data should be used for visualization such,
 #'  PCA and clustering.
 #'@export
-normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TRUE,
+normalize_counts <- function(data, result.dir = "COUNT", thread = 10,
+                             save = TRUE,
                              size.factor.type = c("ratio", "iterate"))
 
   {
@@ -41,7 +42,8 @@ normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TR
     dds <- data
   else if (inherits(data, c("data.frame", "matrix"))){
     samples <- data.frame(name = colnames(data), row.names = colnames(data))
-    dds <- DESeq2::DESeqDataSetFromMatrix(countData = data, colData = samples, design = ~1)
+    dds <- DESeq2::DESeqDataSetFromMatrix(countData = data, colData = samples,
+                                          design = ~1)
   }
   else stop("Can't handle an object of class ", class(data))
 
@@ -49,6 +51,14 @@ normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TR
   # Raw count
   # ++++++++++++++++++++++++++++
   raw.count <- as.data.frame(SummarizedExperiment::assay(dds))
+  col.sums <- colSums(raw.count)
+  samples.with.zero.count <- which(col.sums == 0)
+  if(length(samples.with.zero.count) > 0){
+    samples.names <- names(col.sums)[samples.with.zero.count]
+    stop("Some samples have zero total count: ",
+         paste(samples.names, collapse = ", "), ".\n",
+         "Remove these samples before continuing.")
+  }
 
   # Normalized count for sequencing depth
   # ++++++++++++++++++++++++++++
@@ -67,12 +77,13 @@ normalize_counts <- function(data, result.dir = "COUNT", thread = 10,  save = TR
   # Variance stabilizing transformation
   # ++++++++++++++++++++++++++++
   # - FOR PCA, Clustering, visualization
-  message("- Creating variance stabilizing transformattion data...\n")
+  message("- Creating variance stabilizing transformation data...\n")
   vst. <- DESeq2::varianceStabilizingTransformation(dds)
   count.vst <- SummarizedExperiment::assay(vst.)
 
   # FPKM
   # ++++++++++++++++++++++++++++
+  message("- Creating fpkm data...\n")
   count.fpkm <- try(DESeq2::fpkm(dds))
 
 

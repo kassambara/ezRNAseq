@@ -57,4 +57,3 @@ The workflow is as follow:\cr
 2. Organize BAM files (sorting and indexing). Samtools program required.\cr
 3. Count read using Bioconductor packages: "GenomicFeatures", "Rsamtools", "GenomicAlignments" and "BiocParallel" required.\cr
 }
-

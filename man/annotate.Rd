@@ -30,4 +30,3 @@ Then rownames is taken as ids. Ids can be Ensembl ids or gene names}
 \item ez_biotype_stat(): Make a stat summary of gene biotype
 }
 }
-

@@ -27,4 +27,3 @@ Returns an object of class data.frame containing the following columns:
 Identification of DNA-binding transcription factors and/or epigenetic enzymes in a list of genes.
 Only data for human are available (see ?human.tf and ?human.ee).
 }
-

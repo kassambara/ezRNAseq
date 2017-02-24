@@ -2,8 +2,8 @@
 % Please edit documentation in R/human.ee.R
 \docType{data}
 \name{human.ee}
-\alias{h.ee}
 \alias{human.ee}
+\alias{h.ee}
 \title{Human epigenetic enzymes}
 \format{A data frame with 4 columns and 212 rows coorresponding to genes.}
 \source{
@@ -24,4 +24,3 @@ and erasers of the most important epigenetic marks.
  head(human.ee)
 }
 }
-

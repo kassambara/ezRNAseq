@@ -69,7 +69,25 @@ rnaseq_workflow <- function(data_dir = getwd(), samples.annotation = "samples.tx
   rownames(samples) <- as.vector(samples$name)
   se <- se[, as.vector(samples$name)] # same order as samples
   SummarizedExperiment::colData(se) <- S4Vectors::DataFrame(samples) # add phenotypic data to se
+
+
+  # Samples with zero total counts
+  # ++++++++++++++++++++++++++++
+  message("- Checking samples with zero counts...\n")
+  raw.count <- as.data.frame(SummarizedExperiment::assay(se))
+  col.sums <- colSums(raw.count)
+  samples.with.zero.count <- which(col.sums == 0)
+  if(length(samples.with.zero.count) > 0){
+    samples.names <- names(col.sums)[samples.with.zero.count]
+    warning("Some samples have zero total count: ",
+            paste(samples.names, collapse = ", "), ".\n",
+            "They are removed from the se.")
+    se <- se[, -samples.with.zero.count]
+  }
+
+  message("- Saving the se.RData...\n")
   save(se, file = file.path(result.dir, "COUNT", "se.RDATA"))
+
 
   # Raw count & samples
   # ++++++++++++++++++++++++++++

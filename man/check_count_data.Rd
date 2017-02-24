@@ -22,4 +22,3 @@ Create a pdf file "quality.control.pdf" containing the results of the
 \description{
 Normalize Counts Data Using DESeq2.
 }
-

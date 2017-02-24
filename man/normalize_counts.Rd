@@ -45,4 +45,3 @@ Normalize counts Data using DESeq2 pipeline. Generates 3
  datasets: normalized count data for sequencing data; ii) rlog and iii) VST
  transformed data for data visualization: clustering, heatmap, PCA, ....
 }
-

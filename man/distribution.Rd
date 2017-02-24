@@ -24,4 +24,3 @@ Count distribution
 \item distribution(): plots the count distribution per sample or per group
 }
 }
-

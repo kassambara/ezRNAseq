@@ -62,4 +62,3 @@ files in R \item \strong{GenomicAlignments} for read counting \item
 Input files: BAM files. No need to sort the BAM files in Bioconductor version
 > 2.12.
 }
-

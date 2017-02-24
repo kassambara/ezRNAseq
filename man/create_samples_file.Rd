@@ -20,4 +20,3 @@ Create a samples.txt file in the working directory. It returns also a data.frame
 \description{
 Create samples annotation file according fastq files contained in a FASTQ directory.
 }
-

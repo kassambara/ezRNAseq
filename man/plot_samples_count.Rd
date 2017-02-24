@@ -33,4 +33,3 @@ Return a plot ggplot.
 \description{
 Plot the total count per sample
 }
-

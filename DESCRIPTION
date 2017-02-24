@@ -78,4 +78,4 @@ Collate:
     'rnaseq_workflow.R'
     'utilities_stepProfiler.R'
     'stepProfiler.R'
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

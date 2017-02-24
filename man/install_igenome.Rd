@@ -27,4 +27,3 @@ install_igenome(version = "grch37", result_dir = "~/genomes")
 }
 
 }
-

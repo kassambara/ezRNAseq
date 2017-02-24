@@ -26,4 +26,3 @@ Count the number of reads in fastq files.
 fastq_nb_reads(fastq, ext = "R1.fastq")
 }
 }
-

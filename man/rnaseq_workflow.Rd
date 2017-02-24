@@ -68,4 +68,3 @@ using hseq-count or R. *_sorted.bam and *_sorted.bam.bai files can be used for I
 \description{
 RNAseq Workflow. Alignment with STAR and read counting with R/Bioconductor.
 }
-

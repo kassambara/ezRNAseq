@@ -29,4 +29,3 @@ create_star_index(fasta_file = "~/genomes/sequence/genome.fa",
 }
 
 }
-
