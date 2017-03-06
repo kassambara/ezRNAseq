@@ -48,7 +48,7 @@ BugReports: https://github.com/kassambara/ezRNAseq/issues
 biocViews: Software, Visualization, Sequencing
 Repository: Bioconductor
 SystemRequirements: STAR, samtools
-Collate:
+Collate: 
     'AllClasses.R'
     'summarize.R'
     'utilities_diffexprs.R'
@@ -56,6 +56,7 @@ Collate:
     'plot.R'
     'annotate.R'
     'biomart.hs.genes.R'
+    'bowtie_align.R'
     'check_count_data.R'
     'count_reads.R'
     'create_samples_file.R'
