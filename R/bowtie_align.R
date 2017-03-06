@@ -75,7 +75,7 @@ bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt"
                                "-S", file.path(result.dir, "SAM", paste0(name, ".sam")),
                                ") 2>", file.path(result.dir, "LOG", paste0(name, ".log")),
                                sep=" " ))
-  else cmd <- with(samples, paste("bowtie2 -p", thread, "-x ", bowtie2.index,
+  else cmd <- with(samples, paste("(bowtie2 -p", thread, "-x ", bowtie2.index,
                                   fastq1,
                                   "-S", file.path(result.dir, "SAM", paste0(name, ".sam")),
                                   ") 2>", file.path(result.dir, "LOG", paste0(name, ".log")),
