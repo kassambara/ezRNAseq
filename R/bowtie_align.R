@@ -79,7 +79,7 @@ bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt"
                                   fastq1,
                                   "-S", file.path(result.dir, "SAM", paste0(name, ".sam")),
                                   ") 2>", file.path(result.dir, "LOG", paste0(name, ".log")),
-                                  sep=" ", sep=" " ))
+                                  sep=" " ))
 
   for(c in cmd) {
     cat(c, "\n--------------------------------------\n")
