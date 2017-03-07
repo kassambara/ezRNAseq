@@ -48,7 +48,7 @@ bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt"
   samples <- read.delim(file=samples.annotation, header = TRUE, row.names = NULL)
 
   pairedEnd <- !is.null(samples$fastq2)
-  file.ext <- tail(unlist(strsplit(samples$fastq1[1], ".", fixed = TRUE)), 1)
+  file.ext <- tail(unlist(strsplit(as.vector(samples$fastq1)[1], ".", fixed = TRUE)), 1)
   fastq.gz <- file.ext == "gz"
 
   # Create result dirs

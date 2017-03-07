@@ -6,8 +6,8 @@
 #'@return Create a samples.txt file in the working directory. It returns also a data.frame as an invisible object.
 #'@export
 create_samples_file <- function(fastq_dir = "FASTQ",
-                                fastq1_pattern = "_R1.fastq.gz",
-                                fastq2_pattern = "_R2.fastq.gz")
+                                fastq1_pattern = "_R1.fastq",
+                                fastq2_pattern = "_R2.fastq")
 {
   fastq1_files <- list.files(fastq_dir, pattern = fastq1_pattern)
   fastq2_files <- list.files(fastq_dir, pattern = fastq2_pattern)
