@@ -6,8 +6,7 @@
 \usage{
 bowtie2_align(data_dir = getwd(), samples.annotation = "samples.txt",
   bowtie2.index = "/eqmoreaux/genomes/Homo_sapiens/UCSC/hg19/Sequence/Bowtie2Index/genome",
-  result.dir = getwd(), keep = c("bam"), pairedEnd = TRUE,
-  fastq.gz = TRUE, thread = 20)
+  result.dir = getwd(), keep = c("bam"), thread = 20)
 }
 \arguments{
 \item{data_dir}{the directory containing the data. It should contains a subdirectory called "FASTQ" which
@@ -28,10 +27,6 @@ This is optional if single-end sequencing is used
 
 \item{keep}{a character vector specifying the file to be kept.
 Allowed values include c("name_sorted_bam", "chr_sorted_bam", "sam" ).}
-
-\item{pairedEnd}{specify if the data are paired-end sequencing data. Default is TRUE.}
-
-\item{fastq.gz}{specify if the FASTQ files are compressed. Default is TRUE.}
 
 \item{thread}{Number of threads to be used. This depends to the available computer ressources.}
 }

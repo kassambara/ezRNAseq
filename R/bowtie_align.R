@@ -18,8 +18,6 @@ NULL
 #'@param keep a character vector specifying the file to be kept.
 #' Allowed values include c("name_sorted_bam", "chr_sorted_bam", "sam" ).
 #'@param thread Number of threads to be used. This depends to the available computer ressources.
-#'@param pairedEnd specify if the data are paired-end sequencing data. Default is TRUE.
-#'@param fastq.gz specify if the FASTQ files are compressed. Default is TRUE.
 #'@details
 #' The function bowtie2_align(), requires bowtie2 and samtools programs to work.
 #' Make sure that they are installed. \cr\cr
@@ -43,22 +41,26 @@ NULL
 bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
                        bowtie2.index = "/eqmoreaux/genomes/Homo_sapiens/UCSC/hg19/Sequence/Bowtie2Index/genome",
                        result.dir = getwd(),
-                       keep = c("bam"),
-                       pairedEnd = TRUE, fastq.gz = TRUE, thread = 20)
+                       keep = c("bam"),thread = 20)
 {
 
   # Read samples.txt file
   samples <- read.delim(file=samples.annotation, header = TRUE, row.names = NULL)
 
-  # Go to the directory containing the FASTQ files
-  oldwd <- getwd()
-  setwd(file.path(data_dir, "FASTQ"))
+  pairedEnd <- !is.null(samples$fastq2)
+  file.ext <- tail(unlist(strsplit(samples$fastq1[1], ".", fixed = TRUE)), 1)
+  fastq.gz <- file.ext == "gz"
 
   # Create result dirs
   # ++++++++++++++++++++++++++++++++++++++++
   create_dir(file.path(result.dir, "SAM"))
   create_dir(file.path( result.dir, "BAM"))
   create_dir(file.path( result.dir, "LOG"))
+
+
+  # Go to the directory containing the FASTQ files
+  oldwd <- getwd()
+  setwd(file.path(data_dir, "FASTQ"))
 
   # bowtie2 Alignement
   # ++++++++++++++++++++++++++++++++++++++++
@@ -85,6 +87,12 @@ bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt"
     cat(c, "\n--------------------------------------\n")
     system(c) # Run alignment
   }
+
+  # Write alignment params
+  # +++++++++++++++++++++
+  sink(file.path(result.dir, "LOG", "_alignment.params"))
+  for(c in cmd) cat(c, "\n\n")
+  sink()
 
   # Convert SAM -> BAM file
   # ++++++++++++++++++++++++++++++++++++++++
