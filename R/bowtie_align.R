@@ -91,7 +91,7 @@ bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt"
   #  ls *.sam | parallel "samtools view -bS {} > ../BAM/{.}.bam"
   # message("- Converting SAM to BAM Files...\n")
    sam_dir <- file.path(result.dir, "SAM")
-   bam_dir <- file.path(result.dir, "../BAM/{.}.bam")
+   bam_dir <- file.path(result.dir, "BAM/{.}.bam")
    setwd(sam_dir) # Go to SAM dir
    cmd <- paste( 'ls',  '*.sam | parallel -t',
                   '"samtools view -bS {} >', bam_dir, '"', sep = " ")
