@@ -1,47 +1,52 @@
 #' @include utilities.R
 NULL
 #'Read Aligning
-#'@description
-#'Read aligning using Bowtie2 software.
-#'@param data_dir the directory containing the data. It should contains a subdirectory called "FASTQ" which
-#'contains fastq files. Default value is the working directory
-#'@param samples.annotation the path to "samples.txt" tabulation file containing sample annotations.
-#'This file should contain at least 3 columns:
-#'\itemize{
-#'\item name: corresponding to sample name. It will be used to report the result
-#'\item fastq1: the first fastq file name for paired-end sequencing
-#'\item fastq2: the second fastq file name for paired-end sequencing.
-#'This is optional if single-end sequencing is used
-#'}
+#'@description Read aligning using Bowtie2 software.
+#'@param data_dir the directory containing the data. It should contains a
+#'  subdirectory called "FASTQ" which contains fastq files. Default value is the
+#'  working directory
+#'@param samples.annotation the path to "samples.txt" tabulation file containing
+#'  sample annotations. This file should contain at least 3 columns: \itemize{
+#'  \item name: corresponding to sample name. It will be used to report the
+#'  result \item fastq1: the first fastq file name for paired-end sequencing
+#'  \item fastq2: the second fastq file name for paired-end sequencing. This is
+#'  optional if single-end sequencing is used }
 #'@param bowtie2.index reference genome for bowtie2.
+#'@param genome.fa path to the fasta file of reference genome. Make sure that
+#'  samtools index has been created for the reference genome.
 #'@param result.dir The absolute path of result directory.
-#'@param keep a character vector specifying the file to be kept.
-#' Allowed values include c("name_sorted_bam", "chr_sorted_bam", "sam" ).
-#'@param thread Number of threads to be used. This depends to the available computer ressources.
-#'@details
-#' The function bowtie2_align(), requires bowtie2 and samtools programs to work.
-#' Make sure that they are installed. \cr\cr
-#' The workflow is as follow:\cr
-#' 1. Align all FASTQ files using bowtie2. BAM files are generated.\cr
-#' 2. Organize BAM files (sorting and indexing). Samtools program required.\cr
-#' 3. Count read using Bioconductor packages: "GenomicFeatures", "Rsamtools", "GenomicAlignments" and "BiocParallel" required.\cr
+#'@param keep a character vector specifying the file to be kept. Allowed values
+#'  include c("name_sorted_bam", "chr_sorted_bam", "sam" ).
+#'@param thread Number of threads to be used. This depends to the available
+#'  computer ressources.
+#'@param memory a numeric value specifying the memory limit to be used. Default
+#'  is 3G.
+#'@param rmdup logical. If TRUE, remove PCR duplicates.
+#'@param call_variant logical. If TRUE, call variant.
+#'@details The function bowtie2_align(), requires bowtie2 and samtools programs
+#'to work. Make sure that they are installed. \cr\cr The workflow is as
+#'follow:\cr 1. Align all FASTQ files using bowtie2. BAM files are generated.\cr
+#'2. Organize BAM files (sorting and indexing). Samtools program required.\cr 3.
+#'Count read using Bioconductor packages: "GenomicFeatures", "Rsamtools",
+#'"GenomicAlignments" and "BiocParallel" required.\cr
 #'
-#' @return Three subdirectories are created: \cr
-#' \itemize{
-#' \item BAM: containing unsorted and sorted BAM files, and BAM index file.
-#' BAM comtent is sorted by read names (*_name_sorted.bam) or by chromosome (*_sorted.bam).
-#' The index files are of form *_sorted.bam.bai. *_name_sorted.bam files are used for read counting
-#' using hseq-count or R. *_sorted.bam and *_sorted.bam.bai files can be used for IGV visualization.
-#' \item COUNT: containing read counting results. It contains the following files:\cr
-#' 1. se.RDATA: containing an object "se" which is an object of class SummarizedExperiment
-#' }
-#' @name bowtie2_align
-#' @rdname bowtie2_align
+#'@return Three subdirectories are created: \cr \itemize{ \item BAM: containing
+#'  unsorted and sorted BAM files, and BAM index file. BAM comtent is sorted by
+#'  read names (*_name_sorted.bam) or by chromosome (*_sorted.bam). The index
+#'  files are of form *_sorted.bam.bai. *_name_sorted.bam files are used for
+#'  read counting using hseq-count or R. *_sorted.bam and *_sorted.bam.bai files
+#'  can be used for IGV visualization. \item COUNT: containing read counting
+#'  results. It contains the following files:\cr 1. se.RDATA: containing an
+#'  object "se" which is an object of class SummarizedExperiment }
+#'@name bowtie2_align
+#'@rdname bowtie2_align
 #'@export
 bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt",
                        bowtie2.index = "/eqmoreaux/genomes/Homo_sapiens/UCSC/hg19/Sequence/Bowtie2Index/genome",
+                       genome.fa = "/eqmoreaux/genomes/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa",
                        result.dir = getwd(),
-                       keep = c("bam"),thread = 20)
+                       keep = c("bam"), thread = 20,
+                       memory = 3000000000, rmdup = FALSE, call_variant = FALSE)
 {
 
   # Read samples.txt file
@@ -110,6 +115,54 @@ bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt"
    if(!("sam" %in% keep)){
     unlink(file.path(result.dir, "SAM"),
             recursive = TRUE, force = TRUE)
+   }
+
+   # Organizing BAM files
+   #++++++++++++++++++++++++++++++++++++++++++
+   # - sort by chromosome and create index for IGV
+   #  ls *.bam | parallel "samtools sort file.bam  file_name_sorted.bam"
+   message("- Organizing BAM files... \n")
+   setwd(file.path(result.dir, "BAM"))
+   message("- Sorting reads by chromosome... \n")
+   create_dir("chr_sorted")
+   system(paste('ls', '*.bam | parallel -t',
+                '"samtools sort {} chr_sorted/{.}_chrsorted -m', memory, '"', sep = " ")) # by chromosome
+   setwd("chr_sorted")
+   if(!rmdup) system(paste('ls', '*.bam | parallel -t',
+                '"samtools index {} {}"', sep = " ")) #index
+   system("rm ../*.bam") # Removing unsorted BAM
+   system("mv *.bam* ../") # moving chr_sorted content to BAM
+   system("rm -r chr_sorted")
+
+   # Removing PCR duplicates
+   #++++++++++++++++++++++++++++++++++++++
+   if(rmdup){
+
+     setwd(file.path(result.dir, "BAM"))
+     create_dir(file.path(result.dir, "RMDUP"))
+     system('ls *.bam | parallel -t "samtools rmdup {} ../RMDUP/{.}_rmdup.bam"')
+
+     setwd(file.path(result.dir, "RMDUP"))
+     system(paste('ls', '*.bam | parallel -t',
+                  '"samtools index {} {}"', sep = " "))
+
+     setwd(result.dir)
+     system('rm -r BAM')
+     system('mv RMDUP BAM')
+
+   }
+
+   # Calling variants
+   #++++++++++++++++++++++++++++++++++++++
+   if(call_variant){
+     create_dir(file.path(result.dir, "VCF"))
+     setwd(file.path(result.dir, "BAM"))
+
+     cmd <- paste( 'ls *.bam | parallel -t',
+                   'samtools mpileup -Buf', genome.fa, '{} |',
+                   'bcftools view - -vcg > ../VCF/{.}.vcf',
+                    sep = "")
+     system(cmd)
    }
 
   setwd(oldwd)

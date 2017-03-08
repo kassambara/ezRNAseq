@@ -6,49 +6,60 @@
 \usage{
 bowtie2_align(data_dir = getwd(), samples.annotation = "samples.txt",
   bowtie2.index = "/eqmoreaux/genomes/Homo_sapiens/UCSC/hg19/Sequence/Bowtie2Index/genome",
-  result.dir = getwd(), keep = c("bam"), thread = 20)
+  genome.fa = "/eqmoreaux/genomes/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa",
+  result.dir = getwd(), keep = c("bam"), thread = 20, memory = 3e+09,
+  rmdup = FALSE, call_variant = FALSE)
 }
 \arguments{
-\item{data_dir}{the directory containing the data. It should contains a subdirectory called "FASTQ" which
-contains fastq files. Default value is the working directory}
+\item{data_dir}{the directory containing the data. It should contains a
+subdirectory called "FASTQ" which contains fastq files. Default value is the
+working directory}
 
-\item{samples.annotation}{the path to "samples.txt" tabulation file containing sample annotations.
-This file should contain at least 3 columns:
-\itemize{
-\item name: corresponding to sample name. It will be used to report the result
-\item fastq1: the first fastq file name for paired-end sequencing
-\item fastq2: the second fastq file name for paired-end sequencing.
-This is optional if single-end sequencing is used
-}}
+\item{samples.annotation}{the path to "samples.txt" tabulation file containing
+sample annotations. This file should contain at least 3 columns: \itemize{
+\item name: corresponding to sample name. It will be used to report the
+result \item fastq1: the first fastq file name for paired-end sequencing
+\item fastq2: the second fastq file name for paired-end sequencing. This is
+optional if single-end sequencing is used }}
 
 \item{bowtie2.index}{reference genome for bowtie2.}
 
+\item{genome.fa}{path to the fasta file of reference genome. Make sure that
+samtools index has been created for the reference genome.}
+
 \item{result.dir}{The absolute path of result directory.}
 
-\item{keep}{a character vector specifying the file to be kept.
-Allowed values include c("name_sorted_bam", "chr_sorted_bam", "sam" ).}
+\item{keep}{a character vector specifying the file to be kept. Allowed values
+include c("name_sorted_bam", "chr_sorted_bam", "sam" ).}
 
-\item{thread}{Number of threads to be used. This depends to the available computer ressources.}
+\item{thread}{Number of threads to be used. This depends to the available
+computer ressources.}
+
+\item{memory}{a numeric value specifying the memory limit to be used. Default
+is 3G.}
+
+\item{rmdup}{logical. If TRUE, remove PCR duplicates.}
+
+\item{call_variant}{logical. If TRUE, call variant.}
 }
 \value{
-Three subdirectories are created: \cr
-\itemize{
-\item BAM: containing unsorted and sorted BAM files, and BAM index file.
-BAM comtent is sorted by read names (*_name_sorted.bam) or by chromosome (*_sorted.bam).
-The index files are of form *_sorted.bam.bai. *_name_sorted.bam files are used for read counting
-using hseq-count or R. *_sorted.bam and *_sorted.bam.bai files can be used for IGV visualization.
-\item COUNT: containing read counting results. It contains the following files:\cr
-1. se.RDATA: containing an object "se" which is an object of class SummarizedExperiment
-}
+Three subdirectories are created: \cr \itemize{ \item BAM: containing
+ unsorted and sorted BAM files, and BAM index file. BAM comtent is sorted by
+ read names (*_name_sorted.bam) or by chromosome (*_sorted.bam). The index
+ files are of form *_sorted.bam.bai. *_name_sorted.bam files are used for
+ read counting using hseq-count or R. *_sorted.bam and *_sorted.bam.bai files
+ can be used for IGV visualization. \item COUNT: containing read counting
+ results. It contains the following files:\cr 1. se.RDATA: containing an
+ object "se" which is an object of class SummarizedExperiment }
 }
 \description{
 Read aligning using Bowtie2 software.
 }
 \details{
-The function bowtie2_align(), requires bowtie2 and samtools programs to work.
-Make sure that they are installed. \cr\cr
-The workflow is as follow:\cr
-1. Align all FASTQ files using bowtie2. BAM files are generated.\cr
-2. Organize BAM files (sorting and indexing). Samtools program required.\cr
-3. Count read using Bioconductor packages: "GenomicFeatures", "Rsamtools", "GenomicAlignments" and "BiocParallel" required.\cr
+The function bowtie2_align(), requires bowtie2 and samtools programs
+to work. Make sure that they are installed. \cr\cr The workflow is as
+follow:\cr 1. Align all FASTQ files using bowtie2. BAM files are generated.\cr
+2. Organize BAM files (sorting and indexing). Samtools program required.\cr 3.
+Count read using Bioconductor packages: "GenomicFeatures", "Rsamtools",
+"GenomicAlignments" and "BiocParallel" required.\cr
 }
