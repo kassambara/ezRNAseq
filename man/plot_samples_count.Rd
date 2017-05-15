@@ -20,7 +20,7 @@ plot_samples_count(data, color = "white", fill = "steelblue",
 \item{ylab}{character vector specifying y axis labels. Use ylab = FALSE to
 hide ylab.}
 
-\item{xlab}{character vector specifying x axis labels, respectively. Use xlab
+\item{xlab}{character vector specifying x axis labels. Use xlab
 = FALSE to hide xlab.}
 
 \item{name.size}{Change the sample name size}
