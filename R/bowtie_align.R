@@ -19,8 +19,6 @@ NULL
 #'  include c("name_sorted_bam", "chr_sorted_bam", "sam" ).
 #'@param thread Number of threads to be used. This depends to the available
 #'  computer ressources.
-#'@param memory a numeric value specifying the memory limit to be used. Default
-#'  is 3G.
 #'@param rmdup logical. If TRUE, remove PCR duplicates.
 #'@param call_variant logical. If TRUE, call variant.
 #'@details The function bowtie2_align(), requires bowtie2 and samtools programs
@@ -45,8 +43,7 @@ bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt"
                        bowtie2.index = "/eqmoreaux/genomes/Homo_sapiens/UCSC/hg19/Sequence/Bowtie2Index/genome",
                        genome.fa = "/eqmoreaux/genomes/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa",
                        result.dir = getwd(),
-                       keep = c("bam"), thread = 20,
-                       memory = 3000000000, rmdup = FALSE, call_variant = FALSE)
+                       keep = c("bam"), thread = 20, rmdup = FALSE, call_variant = FALSE)
 {
 
   # Read samples.txt file
@@ -126,7 +123,7 @@ bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt"
    message("- Sorting reads by chromosome... \n")
    create_dir("chr_sorted")
    system(paste('ls', '*.bam | parallel -t',
-                '"samtools sort {} chr_sorted/{.}_chrsorted -m', memory, '"', sep = " ")) # by chromosome
+                '"samtools sort {} chr_sorted/{.}_chrsorted"', sep = " ")) # by chromosome
    setwd("chr_sorted")
    if(!rmdup) system(paste('ls', '*.bam | parallel -t',
                 '"samtools index {} {}"', sep = " ")) #index

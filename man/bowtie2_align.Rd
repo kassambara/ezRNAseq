@@ -7,8 +7,8 @@
 bowtie2_align(data_dir = getwd(), samples.annotation = "samples.txt",
   bowtie2.index = "/eqmoreaux/genomes/Homo_sapiens/UCSC/hg19/Sequence/Bowtie2Index/genome",
   genome.fa = "/eqmoreaux/genomes/Homo_sapiens/UCSC/hg19/Sequence/WholeGenomeFasta/genome.fa",
-  result.dir = getwd(), keep = c("bam"), thread = 20, memory = 3e+09,
-  rmdup = FALSE, call_variant = FALSE)
+  result.dir = getwd(), keep = c("bam"), thread = 20, rmdup = FALSE,
+  call_variant = FALSE)
 }
 \arguments{
 \item{data_dir}{the directory containing the data. It should contains a
@@ -34,9 +34,6 @@ include c("name_sorted_bam", "chr_sorted_bam", "sam" ).}
 
 \item{thread}{Number of threads to be used. This depends to the available
 computer ressources.}
-
-\item{memory}{a numeric value specifying the memory limit to be used. Default
-is 3G.}
 
 \item{rmdup}{logical. If TRUE, remove PCR duplicates.}
 
