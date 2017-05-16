@@ -129,7 +129,7 @@ bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt"
                 '"samtools index {} {}"', sep = " ")) #index
    system("rm ../*.bam") # Removing unsorted BAM
    system("mv *.bam* ../") # moving chr_sorted content to BAM
-   system("rm -r chr_sorted")
+   system("rm -r ../chr_sorted")
 
    # Removing PCR duplicates
    #++++++++++++++++++++++++++++++++++++++
