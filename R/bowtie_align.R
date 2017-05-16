@@ -126,10 +126,10 @@ bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt"
                 '"samtools sort {} chr_sorted/{.}_chrsorted"', sep = " ")) # by chromosome
    setwd("chr_sorted")
    if(!rmdup) system(paste('ls', '*.bam | parallel -t',
-                '"samtools index {} {}"', sep = " ")) #index
-   #system("rm ../*.bam") # Removing unsorted BAM
-   #system("mv *.bam* ../") # moving chr_sorted content to BAM
-   #system("rm -r ../chr_sorted")
+                '"samtools index {}"', sep = " ")) #index
+   system("rm ../*.bam") # Removing unsorted BAM
+   system("mv *.bam* ../") # moving chr_sorted content to BAM
+   system("rm -r ../chr_sorted")
 
    # Removing PCR duplicates
    #++++++++++++++++++++++++++++++++++++++
@@ -141,7 +141,7 @@ bowtie2_align <- function(data_dir = getwd(), samples.annotation = "samples.txt"
 
      setwd(file.path(result.dir, "RMDUP"))
      system(paste('ls', '*.bam | parallel -t',
-                  '"samtools index {} {}"', sep = " "))
+                  '"samtools index {}"', sep = " "))
 
      setwd(result.dir)
      system('rm -r BAM')
